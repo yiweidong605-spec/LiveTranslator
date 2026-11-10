@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Translation Eval Report</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f5f4f0; --surface-1:#fcfcfb; --ink:#0b0b0b; --ink-2:#52514e; --muted:#85837d; --line:#e4e2dc; --grid:#ecebe6;
+  --good:#17803f; --bad:#b42318; --best:#e3f6ea;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+  --heat:42,120,214;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --bg:#111110; --surface-1:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86; --line:#2d2c2a; --grid:#262523;
+    --good:#6fd69a; --bad:#ff8f84; --best:#173826;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+    --heat:57,135,229;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#111110; --surface-1:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86; --line:#2d2c2a; --grid:#262523;
+  --good:#6fd69a; --bad:#ff8f84; --best:#173826;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  --heat:57,135,229;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 "Segoe UI","Microsoft YaHei UI","PingFang SC",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;margin:32px 0 10px}
+.sub{color:var(--ink-2);font-size:13px}
+.card{background:var(--surface-1);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th{font-weight:600;color:var(--ink-2);font-size:12.5px;cursor:pointer;user-select:none;vertical-align:bottom}
+th:first-child,td:first-child{text-align:left}
+td.best{background:var(--best);font-weight:600}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:12px;font-size:12.5px;color:var(--ink-2)}
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.bgroup h3{font-size:13px;margin:0 0 8px;color:var(--ink-2);font-weight:600}
+.brow{display:grid;grid-template-columns:1fr 46px;align-items:center;gap:8px;height:20px;margin-bottom:2px}
+.btrack{position:relative;height:12px}
+.bfill{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0}
+.bval{font-size:12px;color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
+.brow:hover .bfill{filter:brightness(1.12)}
+.heat td{text-align:center;min-width:70px}
+.help{font-size:13px;color:var(--ink-2);line-height:1.8}
+.help b{color:var(--ink)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.filters select,.filters input{font:inherit;color:inherit;background:var(--surface-1);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.item{border-top:1px solid var(--line);padding:12px 0}
+.item:first-child{border-top:0}
+.ihead{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.iid{font-size:12px;color:var(--muted)}
+.isrc{font-size:15px;font-weight:500}
+.iref{color:var(--ink-2);font-size:13px}
+.ictx{color:var(--muted);font-size:12.5px;margin:2px 0}
+.hyps{display:grid;grid-template-columns:max-content 1fr max-content max-content max-content;gap:3px 12px;margin-top:6px;align-items:baseline;font-size:13.5px}
+.hm{color:var(--ink-2);font-size:12px;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:12px;text-align:right}
+.ok{color:var(--good);font-weight:700}.ng{color:var(--bad);font-weight:700}
+.badge{display:inline-block;font-size:11.5px;padding:0 6px;border-radius:999px;font-weight:600;font-variant-numeric:tabular-nums}
+.badge.hi{background:#e3f6ea;color:#17803f}.badge.mid{background:#fff3d6;color:#9a6200}.badge.lo{background:#fde4e1;color:#b42318}.badge.na{background:#eceae4;color:#6e6e73}
+.more{margin-top:10px}
+button{font:inherit;color:inherit;background:var(--surface-1);border:1px solid var(--line);border-radius:8px;padding:5px 12px;cursor:pointer}
+#tip{position:fixed;pointer-events:none;background:#222;color:#fff;font-size:12px;padding:5px 8px;border-radius:6px;opacity:0;transition:opacity .1s;z-index:9}
+@media (max-width:640px){ .hyps{grid-template-columns:1fr} .hm{margin-top:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Translation model evaluation</h1>
+  <div class="sub" id="meta"></div>
+
+  <h2>Leaderboard</h2>
+  <div class="card"><table id="lb"></table></div>
+  <div class="help" style="margin-top:10px">
+    <b>How to read:</b>
+    <b>chrF</b> (0–100) character-level overlap with the reference — higher is closer;
+    <b>COMET</b> (~0–1) neural metric, closer to human judgement (run with --comet);
+    <b>Keywords</b> = key renderings correct (e.g. préfecture, 2e étage, avocado vs lawyer);
+    <b>Ambiguity</b> = ambiguous words resolved correctly when context is given;
+    <b>Conf. reliability</b> = Spearman correlation between model confidence and quality (−1…1, closer to 1 = “when it says it's sure, it really is”);
+    <b>Conf. no/with context</b> = for the same ambiguous sentence, confidence should be lower without context.
+    <b>95% CI / P(#1 better)</b> come from a paired bootstrap: if P(#1 better) is below 95%, the two models are not clearly different on this test set.
+    Green = best in column. References are drafts — use scores for <b>relative</b> comparison, not absolute quality.
+  </div>
+
+  <h2>chrF by direction</h2>
+  <div class="card"><div class="legend" id="legend"></div><div class="bars" id="bars"></div></div>
+
+  <h2>chrF by scenario</h2>
+  <div class="card"><table class="heat" id="heat"></table></div>
+
+  <h2>Sentence-by-sentence</h2>
+  <div class="card">
+    <div class="filters">
+      <select id="fDir"><option value="">All directions</option></select>
+      <select id="fCat"><option value="">All scenarios</option></select>
+      <select id="fSort">
+        <option value="id">By id</option>
+        <option value="spread">Largest disagreement first</option>
+        <option value="worst">Lowest average score first</option>
+      </select>
+      <label class="sub"><input type="checkbox" id="fMiss"> Keyword misses only</label>
+      <input id="fQ" placeholder="Search source / output">
+      <span class="sub" id="fCount"></span>
+    </div>
+    <div id="items"></div>
+    <div class="more"><button id="moreBtn">Show 40 more</button></div>
+  </div>
+</div>
+<div id="tip"></div>
+<script>
+const DATA = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CAT = {interview:'Interview', work:'Workplace', daily:'Daily life', street:'Street', slang:'Slang/memes', asr:'ASR noise', ambiguity:'Ambiguity', english:'English'};
+const models = DATA.summaries.map(s => s.model);
+const color = m => `var(--s${(DATA.meta.models.indexOf(m) % 8) + 1})`;   // colour follows the model, never its rank
+const short = m => m.replace('hf.co/tencent/', '').replace('-GGUF', '');
+const f = (v, d=1) => v == null ? '—' : (+v).toFixed(d);
+const pct = v => v == null ? '—' : Math.round(v*100) + '%';
+const cls = v => v == null ? 'na' : v >= .8 ? 'hi' : v >= .6 ? 'mid' : 'lo';
+
+$('#meta').textContent = (DATA.meta.rescore_of ? `Rescored from run ${DATA.meta.rescore_of} · ` : '') + `${DATA.meta.time} · test set ${DATA.meta.testset} (${DATA.meta.testset_hash}) · ${DATA.meta.n_items} sentences × ${models.length} models · glossary ${DATA.meta.glossary?'on':'off'}`;
+
+/* ---------- leaderboard ---------- */
+const COLS = [
+  ['model','Model',null], ['chrf_avg','chrF',1,1], ['chrf_ci','95% CI',0,0,'ci'], ['p_best_better','P(#1 better)',0,0,'pct'], ['comet_avg','COMET',3,1], ['keyword_acc','Keywords',0,1,'pct'],
+  ['ambiguity_ctx_acc','Ambiguity',0,1,'pct'], ['conf_vs_chrf','Conf. reliability',2,1],
+  ['conf_amb_no_ctx','Conf. no ctx',0,0,'pct'], ['conf_amb_ctx','Conf. with ctx',0,0,'pct'],
+  ['first_token_s','First token (s)',2,-1], ['latency_s','Mean (s)',2,-1], ['latency_p90_s','P90 (s)',2,-1], ['errors','Errors',0,-1],
+];
+let sortKey = 'chrf_avg', sortDir = -1;
+function drawLB(){
+  const rows = [...DATA.summaries].sort((a,b) => ((a[sortKey] ?? -1e9) - (b[sortKey] ?? -1e9)) * sortDir);
+  const best = {};
+  for (const [k,, , dir] of COLS){ if (!dir) continue;
+    const vals = DATA.summaries.map(s => s[k]).filter(v => v != null); if (!vals.length) continue;
+    best[k] = dir > 0 ? Math.max(...vals) : Math.min(...vals); }
+  let h = '<tr>' + COLS.map(([k,l]) => `<th data-k="${k}">${l}${sortKey===k?(sortDir<0?' ↓':' ↑'):''}</th>`).join('') + '</tr>';
+  for (const s of rows){
+    h += '<tr>' + COLS.map(([k,, d, dir, fmt]) => {
+      if (k === 'model') return `<td><span class="swatch" style="background:${color(s.model)}"></span>${esc(short(s.model))} <span class="sub">${esc(s.style)}</span></td>`;
+      const v = s[k]; const isBest = dir && v != null && v === best[k] && models.length > 1;
+      if (fmt === 'ci') return `<td>${s.chrf_ci_low == null ? '—' : f(s.chrf_ci_low) + '–' + f(s.chrf_ci_high)}</td>`;
+      return `<td class="${isBest?'best':''}">${fmt==='pct' ? pct(v) : f(v, d)}</td>`;
+    }).join('') + '</tr>';
+  }
+  $('#lb').innerHTML = h;
+  $('#lb').querySelectorAll('th').forEach(th => th.onclick = () => {
+    const k = th.dataset.k; if (k === sortKey) sortDir *= -1; else { sortKey = k; sortDir = -1; } drawLB(); });
+}
+drawLB();
+
+/* ---------- bars by direction ---------- */
+const tip = $('#tip');
+function showTip(e, html){ tip.innerHTML = html; tip.style.opacity = 1; tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY + 12) + 'px'; }
+$('#legend').innerHTML = DATA.meta.models.filter(m => models.includes(m)).map(m => `<span><span class="swatch" style="background:${color(m)}"></span>${esc(short(m))}</span>`).join('');
+const DIRS = [['fr_zh','FR → ZH'],['zh_fr','ZH → FR'],['en_zh','EN → ZH'],['zh_en','ZH → EN']];
+let bh = '';
+for (const [k, label] of DIRS){
+  const vals = DATA.summaries.map(s => [s.model, s['chrf_'+k]]).filter(x => x[1] != null);
+  if (!vals.length) continue;
+  bh += `<div class="bgroup"><h3>${label}</h3>`;
+  for (const m of DATA.meta.models){ const x = vals.find(v => v[0] === m); if (!x) continue;
+    bh += `<div class="brow" data-tip="${esc(short(m))}: chrF ${f(x[1])}"><div class="btrack"><div class="bfill" style="width:${Math.max(1, x[1])}%;background:${color(m)}"></div></div><div class="bval">${f(x[1])}</div></div>`; }
+  bh += '</div>';
+}
+$('#bars').innerHTML = bh;
+document.querySelectorAll('[data-tip]').forEach(el => { el.onmousemove = e => showTip(e, el.dataset.tip); el.onmouseleave = () => tip.style.opacity = 0; });
+
+/* ---------- scenario heat table ---------- */
+const cats = [...new Set(DATA.rows.map(r => r.cat))];
+let hh = '<tr><th>Model</th>' + cats.map(c => `<th>${CAT[c]||c}</th>`).join('') + '</tr>';
+const allv = DATA.summaries.flatMap(s => cats.map(c => s['chrf_cat_'+c])).filter(v => v != null);
+const lo = Math.min(...allv), hi = Math.max(...allv);
+for (const s of DATA.summaries){
+  hh += `<tr><td><span class="swatch" style="background:${color(s.model)}"></span>${esc(short(s.model))}</td>` + cats.map(c => {
+    const v = s['chrf_cat_'+c]; const a = v == null ? 0 : 0.08 + 0.55 * (v - lo) / Math.max(1e-6, hi - lo);
+    return `<td style="background:rgba(var(--heat),${a.toFixed(2)})">${f(v)}</td>`; }).join('') + '</tr>';
+}
+$('#heat').innerHTML = hh;
+
+/* ---------- sentence explorer ---------- */
+const byId = {};
+for (const r of DATA.rows){ (byId[r.id] = byId[r.id] || {id:r.id, cat:r.cat, dir:r.dir, src:r.src, ref:r.ref, group:r.group, with_context:r.with_context, hyps:{}}).hyps[r.model] = r; }
+const items = Object.values(byId);
+for (const it of items){
+  const sc = Object.values(it.hyps).map(h => h.chrf);
+  it.avg = sc.reduce((a,b)=>a+b,0) / sc.length;
+  it.spread = Math.max(...sc) - Math.min(...sc);
+  it.miss = Object.values(it.hyps).some(h => h.hit === false);
+}
+for (const d of [...new Set(items.map(i => i.dir))]) $('#fDir').add(new Option(d, d));
+for (const c of cats) $('#fCat').add(new Option(CAT[c]||c, c));
+let shown = 40;
+function drawItems(){
+  const d = $('#fDir').value, c = $('#fCat').value, q = $('#fQ').value.trim().toLowerCase(), miss = $('#fMiss').checked;
+  let list = items.filter(i => (!d || i.dir === d) && (!c || i.cat === c) && (!miss || i.miss) &&
+    (!q || (i.src + ' ' + i.ref + ' ' + Object.values(i.hyps).map(h => h.hyp).join(' ')).toLowerCase().includes(q)));
+  const s = $('#fSort').value;
+  if (s === 'spread') list.sort((a,b) => b.spread - a.spread);
+  if (s === 'worst') list.sort((a,b) => a.avg - b.avg);
+  $('#fCount').textContent = `${list.length} sentences`;
+  $('#items').innerHTML = list.slice(0, shown).map(it => {
+    const ctx = (DATA.rows.find(r => r.id === it.id) || {}).with_context;
+    const ctxLine = it.cat === 'ambiguity' ? `<div class="ictx">${ctx ? 'with context' : '⚠ no context (confidence should be lower)'}</div>` : '';
+    const hy = DATA.meta.models.filter(m => it.hyps[m]).map(m => { const h = it.hyps[m];
+      return `<div class="hm"><span class="swatch" style="background:${color(m)}"></span>${esc(short(m))}</div>
+        <div>${esc(h.hyp || ('✗ ' + (h.error||'')))}</div>
+        <div class="num">chrF ${f(h.chrf,0)}</div>
+        <div><span class="badge ${cls(h.conf)}" title="Model confidence">${pct(h.conf)}</span></div>
+        <div>${h.hit === true ? '<span class="ok" title="Key rendering correct">✓</span>' : h.hit === false ? '<span class="ng" title="Key rendering wrong">✗</span>' : ''}</div>`; }).join('');
+    return `<div class="item"><div class="ihead"><span class="iid">${esc(it.id)} · ${CAT[it.cat]||it.cat} · ${esc(it.dir)}</span></div>
+      <div class="isrc">${esc(it.src)}</div>${ctxLine}<div class="iref">Reference: ${esc(it.ref)}</div><div class="hyps">${hy}</div></div>`;
+  }).join('');
+  $('#moreBtn').style.display = list.length > shown ? '' : 'none';
+}
+['fDir','fCat','fSort','fMiss'].forEach(id => $('#'+id).onchange = () => { shown = 40; drawItems(); });
+$('#fQ').oninput = () => { shown = 40; drawItems(); };
+$('#moreBtn').onclick = () => { shown += 40; drawItems(); };
+drawItems();
+</script>
+</body>
+</html>

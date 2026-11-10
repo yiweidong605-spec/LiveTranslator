@@ -1,0 +1,12 @@
+# 术语表：中文 = 法语 = 英语（英语可以不写）
+# 翻译时遇到这些词会强制使用你定的译法。按自己的专业往下加，# 后面是注释。
+实习 = stage = internship
+实习生 = stagiaire = intern
+实习协议 = convention de stage = internship agreement
+简历 = CV = resume
+求职信 = lettre de motivation = cover letter
+交换生 = étudiant en échange = exchange student
+硕士 = master = master's degree
+数据分析 = analyse de données = data analysis
+机器学习 = apprentissage automatique = machine learning
+人工智能 = intelligence artificielle = artificial intelligence

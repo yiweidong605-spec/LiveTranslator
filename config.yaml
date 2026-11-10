@@ -1,0 +1,62 @@
+# ==========================================================
+#  实时翻译助手 配置文件（改完保存，重启 run.bat 生效）
+# ==========================================================
+
+my_lang: zh          # 你的语言
+other_lang: fr       # 对方的语言：fr 法语 / en 英语（界面上也能随时切换）
+
+# 朗读期间暂停收音，防止麦克风把翻译出来的声音又识别一遍
+mute_while_speaking: true
+
+asr:                 # 语音识别（faster-whisper）
+  model: auto        # auto（有显卡用 large-v3-turbo，否则 small）/ large-v3-turbo / medium / small / base
+  device: auto       # auto / cuda / cpu
+  compute_type: auto
+  beam_size: 3
+  partial_results: auto   # 边说边出字（auto = 有显卡才开）
+  hotwords: ""            # 容易听错的人名/专有名词，用空格隔开，例如 "Lefèvre Capgemini Station F"
+
+vad:                 # 断句
+  threshold: 0.5         # 人声灵敏度 0~1，环境吵就调高到 0.6~0.7
+  min_silence_ms: 600    # 停顿多久算一句话说完（毫秒）。想更快出翻译就调小到 400
+  min_speech_ms: 300
+  max_segment_s: 12      # 对方一直说不停时，最长 12 秒强制翻译一次
+
+translator:          # 翻译（本地大模型）
+  backend: ollama        # ollama（推荐）/ hf（用 transformers 直接加载，需要 torch）
+  ollama_url: http://127.0.0.1:11434
+  model: qwen2.5:7b      # 由 setup 根据显存自动推荐；也可试 hf.co/tencent/HY-MT1.5-7B-GGUF:Q4_K_M
+  style: auto            # auto / chat / hymt
+  hf_model: Qwen/Qwen2.5-3B-Instruct
+  scenario: 在法国求职、实习面试和日常交流
+  context_turns: 4       # 参考前几句对话，让翻译更连贯
+  glossary_file: glossary.txt
+
+logbook:             # 对话记账本（复盘页面 http://127.0.0.1:7860/history）
+  enabled: true
+  save_audio: true       # 每句话的原声也存下来（约 2MB/分钟），复盘时可以回放
+
+tts:                 # 朗读译文
+  engine: piper          # piper（离线自然人声）/ system（Windows 自带语音）/ off
+  voices:
+    fr: fr_FR-siwis-medium
+    en: en_US-lessac-medium
+  speed: 1.0
+  output_device: default # 视频面试想让对方直接听到，可改成 VB-Cable 的设备编号（见说明）
+
+server:
+  host: 127.0.0.1
+  port: 7860
+  open_browser: true
+
+eval:                # 模型评测（eval.bat）
+  mlflow_tracking_uri: http://swt17:5000   # 平台上的 MLflow；连不上会自动退回本地 mlflow.db
+  candidates:        # 候选翻译模型，按需增删
+    - qwen2.5:7b
+    - qwen2.5:14b
+    - qwen3:8b
+    - qwen3:14b
+    - gemma3:12b
+    - translategemma:12b
+    - hf.co/tencent/HY-MT1.5-7B-GGUF:Q4_K_M
+    - mistral-nemo:12b

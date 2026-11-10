@@ -1,0 +1,28 @@
+# ---- recreated by setup.bat (large, machine-specific) ----
+env/
+.cache/
+models/
+tools/
+ollama/
+__pycache__/
+*.pyc
+
+# ---- personal data: never commit or share ----
+data/logs/
+data/eval/asr/real/
+data/eval/asr/synth/
+data/eval/asr/runs/
+data/eval/runs/
+data/eval/leaderboard.csv
+mlflow.db
+mlruns/
+
+# ---- build output ----
+dist/
+
+# ---- secrets ----
+infra/platform/.env
+infra/platform/sync-credentials.env
+infra/platform/backup-credentials.env
+infra/platform/backup/status/*.json
+secrets/

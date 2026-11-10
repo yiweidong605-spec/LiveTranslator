@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conversation Review</title>
+<style>
+:root{
+  --bg:#ededed; --side:#f7f7f7; --panel:#ffffff; --ink:#191919; --muted:#8a8a8a; --line:#e0e0e0;
+  --them:#ffffff; --me:#95ec69; --me-ink:#111; --sel:#dedede; --accent:#07c160; --chat:#ededed;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111111; --side:#191919; --panel:#1f1f1f; --ink:#e6e6e6; --muted:#8c8c8c; --line:#2c2c2c;
+    --them:#2c2c2c; --me:#3eb575; --me-ink:#0b1a10; --sel:#2a2a2a; --chat:#111111;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111111; --side:#191919; --panel:#1f1f1f; --ink:#e6e6e6; --muted:#8c8c8c; --line:#2c2c2c;
+  --them:#2c2c2c; --me:#3eb575; --me-ink:#0b1a10; --sel:#2a2a2a; --chat:#111111;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI","Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;display:flex;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+/* left: list of days (like a messenger chat list) */
+aside{width:300px;flex:none;background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.search{padding:14px 12px 10px;display:flex;gap:8px}
+.search input{flex:1;border:0;background:var(--sel);border-radius:6px;padding:6px 10px;outline:none}
+.days{flex:1;overflow-y:auto}
+.day{display:flex;gap:10px;padding:12px;cursor:pointer;align-items:center}
+.day:hover{background:var(--sel)}
+.day.on{background:var(--sel)}
+.avatar{width:42px;height:42px;border-radius:6px;flex:none;display:grid;place-items:center;font-weight:700;font-size:13px;line-height:1.1;text-align:center;color:#fff;background:#5b8cff}
+.dinfo{flex:1;min-width:0}
+.drow{display:flex;justify-content:space-between;gap:8px}
+.dtitle{font-weight:500;white-space:nowrap}
+.dtime{color:var(--muted);font-size:12px;white-space:nowrap}
+.dprev{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.redtag{display:inline-block;background:#fa5151;color:#fff;border-radius:9px;font-size:11px;padding:0 6px;margin-right:4px}
+.sidefoot{padding:10px 12px;border-top:1px solid var(--line);display:flex;gap:8px}
+.sidefoot a,.sidefoot button{flex:1;text-align:center;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:5px;text-decoration:none;color:var(--ink);cursor:pointer;font-size:13px}
+/* right: chat history */
+section{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--chat)}
+.chathead{height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--chat)}
+.chathead .t{font-size:16px;font-weight:500}
+.chathead .s{color:var(--muted);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chathead label{color:var(--muted);font-size:12px;display:flex;gap:4px;align-items:center;white-space:nowrap}
+#back{display:none;border:0;background:transparent;font-size:20px;cursor:pointer;padding:0 6px 0 0}
+.msgs{flex:1;overflow-y:auto;padding:16px 24px 40px}
+.empty{color:var(--muted);text-align:center;margin-top:20vh;line-height:2}
+.tsep{text-align:center;margin:16px 0 10px}
+.tsep span{background:rgba(0,0,0,.06);color:var(--muted);font-size:12px;padding:2px 8px;border-radius:4px}
+.msg{display:flex;gap:10px;margin:12px 0;align-items:flex-start}
+.msg.me{flex-direction:row-reverse}
+.msg .av{width:38px;height:38px;border-radius:5px;flex:none;display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff}
+.msg.them .av{background:#7f8c9c}
+.msg.me .av{background:#3a7bd5}
+.bwrap{max-width:min(72%,620px);display:flex;flex-direction:column}
+.msg.me .bwrap{align-items:flex-end}
+.bubble{position:relative;background:var(--them);border-radius:6px;padding:9px 12px;cursor:pointer;box-shadow:0 1px 1px rgba(0,0,0,.04);overflow-wrap:anywhere}
+.msg.me .bubble{background:var(--me);color:var(--me-ink)}
+.bubble::before{content:"";position:absolute;top:13px;left:-5px;border:6px solid transparent;border-left:0;border-right-color:var(--them)}
+.msg.me .bubble::before{left:auto;right:-5px;border:6px solid transparent;border-right:0;border-left-color:var(--me)}
+.bubble.sel{outline:2px solid #3a7bd5}
+.bubble .tr{font-size:16px}
+.bubble .or{font-size:12.5px;opacity:.62;margin-top:3px}
+.bubble .fix{font-size:13px;margin-top:5px;padding-top:5px;border-top:1px dashed rgba(0,0,0,.15)}
+.bubble .fix::before{content:"✏️ Correct: ";opacity:.7}
+.bmeta{display:flex;gap:6px;align-items:center;margin-top:3px;color:var(--muted);font-size:11px}
+.msg.unsure .bubble{box-shadow:0 0 0 1.5px #fa9d8f}
+/* attribute card panel */
+#panel{width:380px;flex:none;background:var(--panel);border-left:1px solid var(--line);display:none;flex-direction:column}
+#panel.open{display:flex}
+.phead{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);font-weight:500}
+.phead button{border:0;background:transparent;font-size:18px;cursor:pointer;color:var(--muted)}
+.pbody{flex:1;overflow-y:auto;padding:14px 16px}
+.pbody .big{font-size:16px;margin-bottom:4px}
+.pbody .small{color:var(--muted);margin-bottom:6px}
+.pact{display:flex;gap:8px;margin:10px 0 2px}
+.pact button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 10px;cursor:pointer}
+.pact button.on{background:#fff3c4;border-color:#e8c547;color:#6b5200}
+.saved{color:var(--accent);font-size:12px;height:16px}
+/* "To review" strip: the day's lowest-confidence translations you have not handled yet */
+.review{flex:none;background:var(--panel);border-bottom:1px solid var(--line);padding:8px 18px;max-height:38vh;overflow-y:auto}
+.review summary{cursor:pointer;font-size:13px;font-weight:500;list-style:none;display:flex;gap:8px;align-items:center}
+.review summary::-webkit-details-marker{display:none}
+.review summary::before{content:"▸";color:var(--muted);transition:transform .15s}
+.review[open] summary::before{transform:rotate(90deg)}
+.review .sub{color:var(--muted);font-weight:400}
+.rhint{color:var(--muted);font-size:12px;margin:4px 0 6px}
+.ritem{display:flex;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
+.ritem:hover .rt{text-decoration:underline}
+.ritem .rw{color:var(--muted);font-size:12px;width:34px;flex:none}
+.ritem .rt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ritem .ro{color:var(--muted)}
+@media (max-width:820px){
+  aside{width:100%}
+  body.chatting aside{display:none}
+  body:not(.chatting) section{display:none}
+  #back{display:inline}
+  #panel{position:fixed;inset:auto 0 0 0;width:100%;height:72vh;border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.2);z-index:5}
+  .msgs{padding:12px}
+  .bwrap{max-width:78%}
+}
+</style>
+<link rel="stylesheet" href="/static/card.css">
+<script src="/static/card.js"></script>
+</head>
+<body>
+<aside>
+  <div class="search"><input id="q" placeholder="🔍 Search conversations"></div>
+  <div class="days" id="days"></div>
+  <div class="sidefoot">
+    <a href="/">← Back to live</a>
+    <button id="theme">Dark/Light</button>
+  </div>
+</aside>
+<section>
+  <div class="chathead">
+    <button id="back" title="Back">‹</button>
+    <div class="t" id="title">Conversation Review</div>
+    <div class="s" id="stats"></div>
+    <label><input type="checkbox" id="onlyLow"> Low confidence only</label>
+  </div>
+  <details class="review" id="review" hidden>
+    <summary id="rsum"></summary>
+    <div class="rhint">The translations the model was least sure about. Open one and either ⭐ star it (it was right),
+      write a correction (it was wrong), or ignore it (noise / misheard). Each choice removes it from this list;
+      stars and corrections become training pairs.</div>
+    <div id="rlist"></div>
+  </details>
+  <div class="msgs" id="msgs"><div class="empty">Pick a day on the left to review it like a chat history.<br>Click any message to open its attribute card.</div></div>
+</section>
+<div id="panel">
+  <div class="phead"><span>Attribute card</span><button id="close" title="Close">✕</button></div>
+  <div class="pbody" id="pbody"></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const WEEK = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTH = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let curDate = null, recs = [], selected = null, searching = false;
+const REVIEW_MAX_CONF = 0.8, REVIEW_TOP_N = 10;  // same rule as the logbook_daily DAG on the platform
+
+function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v);}catch(e){ return null; } }
+const th = store('lt_theme'); if (th) document.documentElement.dataset.theme = th;
+$('#theme').onclick = () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+  const n = cur==='dark'?'light':'dark'; document.documentElement.dataset.theme = n; store('lt_theme', n);
+};
+
+function dayLabel(d){
+  const dt = new Date(d+'T00:00:00'), today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((today - dt)/86400000);
+  if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday';
+  return `${WEEK[dt.getDay()]} ${dt.getDate()} ${MONTH[dt.getMonth()]}`;
+}
+
+async function loadDays(){
+  const days = await (await fetch('/api/log/days')).json();
+  const box = $('#days'); box.innerHTML = '';
+  if (!days.length){ box.innerHTML = '<div class="empty" style="margin-top:30px">No conversations yet.<br>Say a few sentences on the live page first.</div>'; return; }
+  for (const d of days){
+    const el = document.createElement('div'); el.className = 'day'; el.dataset.date = d.date;
+    const [, m, dd] = d.date.split('-');
+    el.innerHTML = `<div class="avatar">${+m}/${+dd}</div>
+      <div class="dinfo"><div class="drow"><span class="dtitle">${esc(dayLabel(d.date))}</span><span class="dtime">${esc(d.last_time.slice(0,5))}</span></div>
+      <div class="dprev">${d.low_conf ? `<span class="redtag">${d.low_conf} unsure</span>` : ''}${d.count} msgs · ${esc(d.preview)}</div></div>`;
+    el.onclick = () => openDay(d.date);
+    box.appendChild(el);
+  }
+  const want = location.hash.slice(1) || (innerWidth > 820 ? days[0].date : null);
+  if (want) openDay(want);
+}
+
+async function openDay(date){
+  curDate = date; location.hash = date; searching = false;
+  document.querySelectorAll('.day').forEach(e => e.classList.toggle('on', e.dataset.date === date));
+  document.body.classList.add('chatting');
+  recs = await (await fetch('/api/log/day/' + date)).json();
+  $('#title').textContent = dayLabel(date);
+  renderChat(true);
+}
+
+function handled(r){ const e = r.edits || {}; return !!(e.correction || e.star || e.ignore); }
+
+function renderReview(){
+  const box = $('#review');
+  if (searching || !recs.length){ box.hidden = true; return; }
+  const todo = recs.filter(r => r.confidence != null && r.confidence < REVIEW_MAX_CONF && !handled(r) && !r.error && r.tgt_text)
+                   .filter((r, i, all) => all.findIndex(x => x.rid === r.rid) === i)
+                   .sort((a,b) => a.confidence - b.confidence).slice(0, REVIEW_TOP_N);
+  const pairs = recs.filter(r => { const e = r.edits || {}; return !e.ignore && (e.correction || (e.star && r.tgt_text)); }).length;
+  box.hidden = false;
+  $('#rsum').innerHTML = todo.length
+    ? `📋 To review <span class="sub">· ${todo.length} left · ${pairs} training pair${pairs===1?'':'s'} from this day</span>`
+    : `✅ Nothing left to review <span class="sub">· ${pairs} training pair${pairs===1?'':'s'} from this day</span>`;
+  $('#rlist').innerHTML = todo.map(r => `<div class="ritem" data-rid="${esc(r.rid)}">
+      ${confBadge(r.confidence)}<span class="rw">${r.who==='me'?'Me':'Them'}</span>
+      <span class="rt">${esc(r.tgt_text)} <span class="ro">← ${esc(r.src_text)}</span></span></div>`).join('');
+  $('#rlist').querySelectorAll('.ritem').forEach(el => el.onclick = () => jumpTo(el.dataset.rid));
+}
+
+function jumpTo(rid){
+  let m = document.querySelector(`.msg[data-rid="${CSS.escape(rid)}"]`);
+  if (!m && $('#onlyLow').checked){ $('#onlyLow').checked = false; renderChat(false); m = document.querySelector(`.msg[data-rid="${CSS.escape(rid)}"]`); }
+  if (m) m.scrollIntoView({block:'center', behavior:'smooth'});
+  openPanel(rid);
+}
+
+function renderChat(toBottom){
+  renderReview();
+  const box = $('#msgs');
+  const onlyLow = $('#onlyLow').checked;
+  const list = onlyLow ? recs.filter(r => r.confidence != null && r.confidence < 0.6) : recs;
+  const confs = recs.map(r => r.confidence).filter(v => v != null);
+  const avg = confs.length ? confs.reduce((a,b)=>a+b,0)/confs.length : null;
+  $('#stats').textContent = `${recs.length} messages · avg confidence ${pct(avg)} · ${confs.filter(v=>v<0.6).length} unsure`;
+  if (!list.length){ box.innerHTML = `<div class="empty">${onlyLow ? 'No low-confidence messages this day 🎉' : 'No records'}</div>`; return; }
+  let html = '', lastTs = 0;
+  for (const r of list){
+    if (r.ts - lastTs > 300) html += `<div class="tsep"><span>${esc((r.time||'').slice(0,5))}</span></div>`;
+    lastTs = r.ts;
+    const e = r.edits || {};
+    const unsure = r.confidence != null && r.confidence < 0.6;
+    html += `<div class="msg ${r.who==='me'?'me':'them'} ${unsure?'unsure':''}" data-rid="${esc(r.rid)}">
+      <div class="av">${r.who==='me'?'Me':'Th'}</div>
+      <div class="bwrap">
+        <div class="bubble ${selected===r.rid?'sel':''}">
+          <div class="tr">${esc(r.tgt_text || '(no translation)')}</div>
+          <div class="or">${highlightWords(r.src_text, r.asr && r.asr.words)}</div>
+          ${e.correction ? `<div class="fix">${esc(e.correction)}</div>` : ''}
+        </div>
+        <div class="bmeta">${confBadge(r.confidence)}${e.star ? '⭐' : ''}${e.ignore ? '🚫' : ''}${e.note ? '📝' : ''}${r.source==='text' ? '⌨' : ''}${r.audio ? '🔊' : ''}</div>
+      </div></div>`;
+  }
+  box.innerHTML = html;
+  box.querySelectorAll('.msg').forEach(m => {
+    const open = () => openPanel(m.dataset.rid);
+    m.querySelector('.bubble').onclick = open;
+    m.querySelector('.badge').onclick = open;
+  });
+  if (toBottom) box.scrollTop = box.scrollHeight;
+}
+
+function openPanel(rid){
+  const r = recs.find(x => x.rid === rid); if (!r) return;
+  selected = rid;
+  document.querySelectorAll('.bubble').forEach(b => b.classList.toggle('sel', b.closest('.msg').dataset.rid === rid));
+  const e = r.edits || {};
+  $('#pbody').innerHTML = `
+    <div class="big">${esc(r.tgt_text || '')}</div>
+    <div class="small">${highlightWords(r.src_text, r.asr && r.asr.words)}</div>
+    <div class="pact"><button id="star" class="${e.star?'on':''}" title="The translation is right (becomes an approved training pair)">${e.star?'⭐ Starred':'☆ Star'}</button>
+      <button id="ign" class="${e.ignore?'on':''}" title="Noise, misheard or private: leave it out of review and training">${e.ignore?'🚫 Ignored':'Ignore'}</button>
+      <button id="copy">Copy translation</button></div>
+    ${attrCardHTML(r, {editable:true})}
+    <div class="saved" id="saved"></div>`;
+  $('#panel').classList.add('open');
+  $('#star').onclick = () => save(r, 'star', !(r.edits||{}).star).then(() => openPanel(rid));
+  $('#ign').onclick = () => save(r, 'ignore', !(r.edits||{}).ignore).then(() => openPanel(rid));
+  $('#copy').onclick = () => navigator.clipboard?.writeText(r.tgt_text || '');
+  document.querySelectorAll('#pbody textarea.edit').forEach(t => {
+    t.addEventListener('change', () => save(r, t.dataset.field, t.value.trim()));
+  });
+}
+
+async function save(r, field, value){
+  const res = await fetch('/api/log/edit', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({rid:r.rid, field, value})});
+  if ((await res.json()).ok){
+    r.edits = Object.assign({}, r.edits, {[field]: value});
+    const s = $('#saved'); if (s){ s.textContent = '✓ Saved locally'; setTimeout(()=> s.textContent='', 1500); }
+    const sc = $('#msgs').scrollTop; renderChat(false); $('#msgs').scrollTop = sc;
+  }
+}
+
+$('#close').onclick = () => { $('#panel').classList.remove('open'); selected = null; document.querySelectorAll('.bubble.sel').forEach(b=>b.classList.remove('sel')); };
+$('#back').onclick = () => { document.body.classList.remove('chatting'); $('#panel').classList.remove('open'); location.hash=''; };
+$('#onlyLow').onchange = () => renderChat(true);
+
+let qTimer;
+$('#q').addEventListener('input', e => {
+  clearTimeout(qTimer);
+  const q = e.target.value.trim();
+  qTimer = setTimeout(async () => {
+    if (!q){ if (curDate) openDay(curDate); return; }
+    recs = await (await fetch('/api/log/search?q=' + encodeURIComponent(q))).json();
+    recs.sort((a,b) => a.ts - b.ts);
+    searching = true;
+    document.body.classList.add('chatting');
+    $('#title').textContent = `Search: “${q}”`;
+    renderChat(true);
+  }, 250);
+});
+$('#review').open = store('lt_review_open') !== '0';
+$('#review').addEventListener('toggle', () => store('lt_review_open', $('#review').open ? '1' : '0'));
+loadDays();
+</script>
+</body>
+</html>

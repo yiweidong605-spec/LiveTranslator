@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily LiveTranslator platform backup at 08:00
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+# if the mini PC was off at 08:00, run as soon as it is back on
+Persistent=true
+Unit=lt-backup.service
+
+[Install]
+WantedBy=timers.target

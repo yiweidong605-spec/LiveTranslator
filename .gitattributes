@@ -1,0 +1,12 @@
+# Line endings are fixed here, not by each machine's git settings:
+# shell scripts must stay LF even when checked out on Windows (they are copied to the Linux mini PC),
+# and .bat files need CRLF for cmd.exe.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary
+*.wav binary
+*.onnx binary
+*.db binary

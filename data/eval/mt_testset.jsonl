@@ -1,0 +1,246 @@
+{"id": "interview-frzh-01", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Bonjour, merci d'être venu. Vous pouvez vous présenter en quelques mots ?", "ref": "您好，感谢您过来。可以简单介绍一下您自己吗？"}
+{"id": "interview-frzh-02", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Qu'est-ce qui vous a attiré dans notre entreprise ?", "ref": "是什么吸引您来我们公司的？"}
+{"id": "interview-frzh-03", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Pourquoi ce stage en particulier ?", "ref": "为什么特别选择这个实习？"}
+{"id": "interview-frzh-04", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Parlez-moi d'un projet dont vous êtes particulièrement fier.", "ref": "跟我说说一个您特别自豪的项目。"}
+{"id": "interview-frzh-05", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Quelles sont vos principales qualités et vos défauts ?", "ref": "您的主要优点和缺点是什么？"}
+{"id": "interview-frzh-06", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Comment vous voyez-vous dans cinq ans ?", "ref": "您觉得五年后的自己会是什么样？"}
+{"id": "interview-frzh-07", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Le stage dure six mois et commence en février, ça vous convient ?", "ref": "实习为期六个月，二月开始，您觉得可以吗？"}
+{"id": "interview-frzh-08", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous avez besoin d'une convention de stage de votre école ?", "ref": "您需要学校出具的实习协议吗？", "expect": ["实习协议", "实习合同"]}
+{"id": "interview-frzh-09", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "La gratification est de 1 200 euros brut par mois, plus les tickets-restaurant.", "ref": "实习补贴是每月税前1200欧元，另外还有餐券。", "expect": ["1200", "1,200", "1 200", "一千二百", "一千两百"]}
+{"id": "interview-frzh-10", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Est-ce que vous avez déjà travaillé en équipe dans un contexte international ?", "ref": "您以前在国际化的环境里做过团队合作吗？"}
+{"id": "interview-frzh-11", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Comment réagissez-vous quand vous n'êtes pas d'accord avec votre manager ?", "ref": "当您和经理意见不一致时，您会怎么处理？"}
+{"id": "interview-frzh-12", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous maîtrisez Python et SQL, c'est bien ça ?", "ref": "您熟练掌握 Python 和 SQL，对吧？"}
+{"id": "interview-frzh-13", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Pouvez-vous m'expliquer comment vous avez nettoyé les données dans ce projet ?", "ref": "您能给我讲讲在这个项目里是怎么清洗数据的吗？"}
+{"id": "interview-frzh-14", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "On travaille en mode hybride : deux jours de télétravail par semaine.", "ref": "我们是混合办公模式：每周两天远程办公。"}
+{"id": "interview-frzh-15", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Quel est votre niveau de français, honnêtement ?", "ref": "说实话，您的法语水平怎么样？"}
+{"id": "interview-frzh-16", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Ce n'est pas grave si votre français n'est pas parfait, l'équipe parle aussi anglais.", "ref": "您的法语不完美也没关系，团队也说英语。"}
+{"id": "interview-frzh-17", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Avez-vous des questions pour nous ?", "ref": "您有什么问题要问我们吗？"}
+{"id": "interview-frzh-18", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "On revient vers vous d'ici la fin de la semaine prochaine.", "ref": "我们会在下周结束前回复您。"}
+{"id": "interview-frzh-19", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Il y aura un deuxième entretien avec le directeur technique.", "ref": "还会有第二轮面试，和技术总监面谈。"}
+{"id": "interview-frzh-20", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous êtes disponible à partir de quand ?", "ref": "您从什么时候开始可以上岗？"}
+{"id": "interview-frzh-21", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Est-ce que vous avez un titre de séjour qui vous autorise à faire un stage ?", "ref": "您有允许您实习的居留证吗？", "expect": ["居留"]}
+{"id": "interview-frzh-22", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Décrivez-moi une situation difficile et comment vous l'avez gérée.", "ref": "给我描述一个困难的情况，以及您是怎么处理的。"}
+{"id": "interview-frzh-23", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Qu'est-ce que vous savez de notre secteur d'activité ?", "ref": "您对我们所在的行业了解多少？"}
+{"id": "interview-frzh-24", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous seriez rattaché à l'équipe data, sous la responsabilité de Claire.", "ref": "您会隶属于数据团队，由 Claire 负责管理。"}
+{"id": "interview-frzh-25", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Pourquoi avez-vous choisi de venir étudier en France ?", "ref": "您为什么选择来法国留学？"}
+{"id": "interview-frzh-26", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Je vois sur votre CV que vous avez fait un échange à Paris.", "ref": "我在您的简历上看到您在巴黎做过交换。"}
+{"id": "interview-frzh-27", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Est-ce que la mobilité géographique vous pose un problème ?", "ref": "换城市工作对您来说有问题吗？"}
+{"id": "interview-frzh-28", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "On cherche quelqu'un d'autonome et de curieux.", "ref": "我们在找一个能独立工作、有好奇心的人。"}
+{"id": "interview-frzh-29", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Votre profil nous intéresse beaucoup.", "ref": "我们对您的背景很感兴趣。"}
+{"id": "interview-frzh-30", "cat": "interview", "src_lang": "fr", "tgt_lang": "zh", "src": "Malheureusement, nous avons retenu une autre candidature.", "ref": "很遗憾，我们选择了另一位候选人。"}
+{"id": "interview-zhfr-01", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "您好，我叫李明，是来面试数据分析实习的。", "ref": "Bonjour, je m'appelle Li Ming, je viens pour l'entretien du stage en analyse de données."}
+{"id": "interview-zhfr-02", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我刚刚完成了在法国一年的交换项目，课程是英语授课的。", "ref": "Je viens de terminer une année d'échange en France, avec des cours en anglais."}
+{"id": "interview-zhfr-03", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我的法语还在进步中，但我可以用英语流利地工作。", "ref": "Mon français est encore en progrès, mais je peux travailler couramment en anglais."}
+{"id": "interview-zhfr-04", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我对贵公司在数据驱动决策方面的工作很感兴趣。", "ref": "Votre travail sur la prise de décision fondée sur les données m'intéresse beaucoup."}
+{"id": "interview-zhfr-05", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "在上一个项目里，我负责搭建一个销售预测模型。", "ref": "Dans mon dernier projet, j'étais chargé de construire un modèle de prévision des ventes."}
+{"id": "interview-zhfr-06", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我们把预测误差降低了大约百分之十五。", "ref": "Nous avons réduit l'erreur de prévision d'environ quinze pour cent.", "expect": ["15", "quinze"]}
+{"id": "interview-zhfr-07", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我的优点是学习能力强，遇到问题会主动去找答案。", "ref": "Mon point fort, c'est que j'apprends vite et que je cherche activement des solutions quand je rencontre un problème."}
+{"id": "interview-zhfr-08", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我的缺点是有时候太注重细节，花的时间比较多。", "ref": "Mon défaut, c'est que je suis parfois trop attaché aux détails et que j'y passe beaucoup de temps."}
+{"id": "interview-zhfr-09", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我二月份就可以开始实习。", "ref": "Je peux commencer le stage dès février.", "expect": ["février"]}
+{"id": "interview-zhfr-10", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我需要学校的实习协议，我会尽快联系学校办理。", "ref": "J'ai besoin d'une convention de stage de mon école, je vais la contacter au plus vite.", "expect": ["convention"]}
+{"id": "interview-zhfr-11", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我有学生居留证，可以合法实习。", "ref": "J'ai un titre de séjour étudiant, je peux faire un stage légalement.", "expect": ["titre de séjour", "carte de séjour"]}
+{"id": "interview-zhfr-12", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "您能再说一遍吗？我没有完全听懂。", "ref": "Pouvez-vous répéter, s'il vous plaît ? Je n'ai pas tout compris."}
+{"id": "interview-zhfr-13", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "您可以说慢一点吗？", "ref": "Pourriez-vous parler un peu plus lentement ?"}
+{"id": "interview-zhfr-14", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "这个问题很好，让我想一下。", "ref": "C'est une très bonne question, laissez-moi réfléchir un instant."}
+{"id": "interview-zhfr-15", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我想了解一下团队现在有多少人。", "ref": "J'aimerais savoir combien de personnes il y a actuellement dans l'équipe."}
+{"id": "interview-zhfr-16", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "实习结束以后有转正的机会吗？", "ref": "Est-ce qu'il y a une possibilité d'embauche à la fin du stage ?"}
+{"id": "interview-zhfr-17", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "一个典型的工作日是什么样的？", "ref": "À quoi ressemble une journée de travail type ?"}
+{"id": "interview-zhfr-18", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我习惯用 Python 和 SQL 做数据处理，也会用 Power BI 做可视化。", "ref": "J'ai l'habitude d'utiliser Python et SQL pour le traitement des données, et Power BI pour la visualisation."}
+{"id": "interview-zhfr-19", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我和来自不同国家的同学一起完成过小组项目。", "ref": "J'ai réalisé des projets de groupe avec des camarades de différents pays."}
+{"id": "interview-zhfr-20", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "遇到分歧的时候，我会先听对方的理由，再用数据说话。", "ref": "En cas de désaccord, j'écoute d'abord les arguments de l'autre, puis je m'appuie sur les données."}
+{"id": "interview-zhfr-21", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我很愿意学习法语，每周都在上课。", "ref": "J'ai vraiment envie d'apprendre le français, je prends des cours chaque semaine."}
+{"id": "interview-zhfr-22", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "谢谢您的时间，期待您的回复。", "ref": "Merci pour votre temps, j'attends votre retour avec impatience."}
+{"id": "interview-zhfr-23", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "远程办公对我来说没问题。", "ref": "Le télétravail ne me pose aucun problème."}
+{"id": "interview-zhfr-24", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我可以接受去其他城市工作。", "ref": "Je suis tout à fait prêt à travailler dans une autre ville."}
+{"id": "interview-zhfr-25", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我五年后希望成为一名数据科学家。", "ref": "Dans cinq ans, j'aimerais devenir data scientist."}
+{"id": "interview-zhfr-26", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我选择法国是因为这里的教育质量和多元文化。", "ref": "J'ai choisi la France pour la qualité de son enseignement et sa diversité culturelle."}
+{"id": "interview-zhfr-27", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "抱歉，我刚才表达得不太清楚。", "ref": "Désolé, je ne me suis pas exprimé très clairement."}
+{"id": "interview-zhfr-28", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "这个职位最大的挑战是什么？", "ref": "Quel est le plus grand défi de ce poste ?"}
+{"id": "interview-zhfr-29", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "我的硕士论文是关于推荐系统的。", "ref": "Mon mémoire de master porte sur les systèmes de recommandation.", "expect": ["mémoire"]}
+{"id": "interview-zhfr-30", "cat": "interview", "src_lang": "zh", "tgt_lang": "fr", "src": "下一步的流程是怎样的？", "ref": "Quelles sont les prochaines étapes du processus ?"}
+{"id": "work-frzh-01", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "On fait le point demain à dix heures ?", "ref": "我们明天十点碰一下进度？"}
+{"id": "work-frzh-02", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu peux m'envoyer le fichier avant midi ?", "ref": "你能在中午之前把文件发给我吗？"}
+{"id": "work-frzh-03", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Je suis en réunion, je te rappelle plus tard.", "ref": "我在开会，等会儿给你回电话。"}
+{"id": "work-frzh-04", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "On prend un café ?", "ref": "去喝杯咖啡吗？"}
+{"id": "work-frzh-05", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "La réunion est décalée à quinze heures.", "ref": "会议改到下午三点了。", "expect": ["三点", "15", "十五点"]}
+{"id": "work-frzh-06", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "N'hésite pas si tu as des questions.", "ref": "有问题随时问。"}
+{"id": "work-frzh-07", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "C'est validé de mon côté.", "ref": "我这边确认没问题了。"}
+{"id": "work-frzh-08", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Il faut que ce soit prêt pour vendredi dernier délai.", "ref": "最迟周五必须准备好。", "expect": ["最迟", "最晚", "截止", "期限"]}
+{"id": "work-frzh-09", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Je pose mes congés la semaine prochaine.", "ref": "我下周请假。", "expect": ["假"]}
+{"id": "work-frzh-10", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "On déjeune ensemble à la cantine ?", "ref": "一起去食堂吃午饭吗？"}
+{"id": "work-frzh-11", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu as accès au drive partagé ?", "ref": "你有共享网盘的权限吗？"}
+{"id": "work-frzh-12", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Je te mets en copie du mail.", "ref": "我在邮件里抄送你。", "expect": ["抄送"]}
+{"id": "work-frzh-13", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Bon week-end, à lundi !", "ref": "周末愉快，周一见！"}
+{"id": "work-frzh-14", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "Ça avance, ton analyse ?", "ref": "你的分析进展怎么样了？"}
+{"id": "work-frzh-15", "cat": "work", "src_lang": "fr", "tgt_lang": "zh", "src": "On est sous l'eau en ce moment.", "ref": "我们最近忙得焦头烂额。", "expect": ["忙", "吃力", "应接不暇", "忙不过来"]}
+{"id": "work-zhfr-01", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "早上好，周末过得怎么样？", "ref": "Bonjour, tu as passé un bon week-end ?"}
+{"id": "work-zhfr-02", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我已经把报告发到你邮箱了。", "ref": "Je t'ai envoyé le rapport par mail."}
+{"id": "work-zhfr-03", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "这个任务我今天下班前能完成。", "ref": "Je peux terminer cette tâche avant la fin de la journée."}
+{"id": "work-zhfr-04", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我不太确定我理解对了，你能举个例子吗？", "ref": "Je ne suis pas sûr d'avoir bien compris, tu peux me donner un exemple ?"}
+{"id": "work-zhfr-05", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我明天要去趟警察局办居留，可能晚点到。", "ref": "Demain je dois passer à la préfecture pour mon titre de séjour, j'arriverai peut-être un peu en retard.", "expect": ["préfecture"], "note": "留学生口中的“警察局”办居留指的是 préfecture"}
+{"id": "work-zhfr-06", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "会议室在几楼？", "ref": "La salle de réunion est à quel étage ?"}
+{"id": "work-zhfr-07", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我电脑连不上公司网络。", "ref": "Mon ordinateur n'arrive pas à se connecter au réseau de l'entreprise."}
+{"id": "work-zhfr-08", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "谢谢你帮忙，下次请你喝咖啡。", "ref": "Merci pour ton aide, la prochaine fois je t'offre un café."}
+{"id": "work-zhfr-09", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我们可以用英语开会吗？", "ref": "On peut faire la réunion en anglais ?"}
+{"id": "work-zhfr-10", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "数据有点问题，我正在核对。", "ref": "Il y a un petit problème avec les données, je suis en train de vérifier."}
+{"id": "work-zhfr-11", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我觉得这个方案可行，但成本有点高。", "ref": "Je pense que cette solution est faisable, mais le coût est un peu élevé."}
+{"id": "work-zhfr-12", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我今天身体不舒服，想在家办公。", "ref": "Je ne me sens pas bien aujourd'hui, j'aimerais télétravailler."}
+{"id": "work-zhfr-13", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "你什么时候有空？我想请教你一个问题。", "ref": "Quand est-ce que tu es disponible ? J'aimerais te poser une question."}
+{"id": "work-zhfr-14", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "周五的团建我会参加。", "ref": "Je participerai au team building vendredi."}
+{"id": "work-zhfr-15", "cat": "work", "src_lang": "zh", "tgt_lang": "fr", "src": "我先走了，明天见！", "ref": "J'y vais, à demain !"}
+{"id": "daily-frzh-01", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Votre dossier est incomplet, il manque un justificatif de domicile.", "ref": "您的材料不全，缺一份住址证明。", "expect": ["住址证明", "居住证明", "地址证明", "住所证明", "居住地证明", "住址"]}
+{"id": "daily-frzh-02", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Il faut prendre rendez-vous en ligne sur le site de la préfecture.", "ref": "需要在省政府网站上在线预约。"}
+{"id": "daily-frzh-03", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous avez votre carte Vitale ?", "ref": "您带医保卡了吗？", "expect": ["医保", "健康卡"]}
+{"id": "daily-frzh-04", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Ce médicament est à prendre trois fois par jour après les repas.", "ref": "这个药每天吃三次，饭后服用。"}
+{"id": "daily-frzh-05", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Le loyer est de 650 euros charges comprises.", "ref": "房租是650欧元，包含杂费。", "expect": ["650"]}
+{"id": "daily-frzh-06", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous pouvez faire une demande d'APL auprès de la CAF.", "ref": "您可以向家庭补助局（CAF）申请住房补助（APL）。", "expect": ["住房补助", "房补", "住房补贴", "APL"]}
+{"id": "daily-frzh-07", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Il faut résilier votre abonnement un mois à l'avance.", "ref": "您需要提前一个月解约。"}
+{"id": "daily-frzh-08", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Le train pour Lyon a vingt minutes de retard.", "ref": "去里昂的火车晚点二十分钟。", "expect": ["二十", "20"]}
+{"id": "daily-frzh-09", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Le distributeur a avalé ma carte.", "ref": "取款机把我的卡吞了。", "expect": ["取款机", "ATM", "提款机", "机器"]}
+{"id": "daily-frzh-10", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous voulez un sac ? C'est cinq centimes.", "ref": "要袋子吗？五分钱。"}
+{"id": "daily-frzh-11", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Il y a une grève des transports jeudi.", "ref": "周四有交通罢工。", "expect": ["罢工"]}
+{"id": "daily-frzh-12", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous devez composter votre billet avant de monter.", "ref": "上车前必须先给车票打孔。"}
+{"id": "daily-frzh-13", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "La pharmacie de garde est ouverte ce soir.", "ref": "今晚有值班药房开门。"}
+{"id": "daily-frzh-14", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Votre colis vous attend au point relais.", "ref": "您的包裹在自提点等您领取。"}
+{"id": "daily-frzh-15", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Le médecin traitant n'a pas de créneau avant deux semaines.", "ref": "家庭医生两周内都没有空档。"}
+{"id": "daily-frzh-16", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "On doit faire l'état des lieux à la sortie.", "ref": "退房时要做房屋状况检查。"}
+{"id": "daily-frzh-17", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Votre virement sera effectué sous 48 heures.", "ref": "您的转账将在48小时内完成。"}
+{"id": "daily-frzh-18", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Pensez à garder votre ticket de caisse.", "ref": "记得保留购物小票。"}
+{"id": "daily-frzh-19", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Les poubelles jaunes, c'est pour le recyclage.", "ref": "黄色垃圾桶是放可回收垃圾的。"}
+{"id": "daily-frzh-20", "cat": "daily", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous avez une pièce d'identité ?", "ref": "您有身份证件吗？"}
+{"id": "daily-zhfr-01", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "你好，我想开一个银行账户。", "ref": "Bonjour, je voudrais ouvrir un compte bancaire."}
+{"id": "daily-zhfr-02", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我的居留卡快到期了，需要续签。", "ref": "Mon titre de séjour va bientôt expirer, je dois le renouveler."}
+{"id": "daily-zhfr-03", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我预约了下午三点。", "ref": "J'ai rendez-vous à quinze heures."}
+{"id": "daily-zhfr-04", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我发烧了，还一直咳嗽。", "ref": "J'ai de la fièvre et je tousse sans arrêt."}
+{"id": "daily-zhfr-05", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "这个药需要处方吗？", "ref": "Est-ce que ce médicament nécessite une ordonnance ?", "expect": ["ordonnance"]}
+{"id": "daily-zhfr-06", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我家暖气坏了，能派人来修一下吗？", "ref": "Mon chauffage est en panne, vous pouvez envoyer quelqu'un pour le réparer ?"}
+{"id": "daily-zhfr-07", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "押金什么时候退给我？", "ref": "Quand est-ce que vous allez me rendre la caution ?", "expect": ["caution", "dépôt de garantie", "dépôt"]}
+{"id": "daily-zhfr-08", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我想买一张去马赛的往返票。", "ref": "Je voudrais un billet aller-retour pour Marseille.", "expect": ["aller-retour", "aller retour"]}
+{"id": "daily-zhfr-09", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我有青年卡，可以打折吗？", "ref": "J'ai la carte jeune, est-ce que j'ai droit à une réduction ?"}
+{"id": "daily-zhfr-10", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我的包裹显示已送达，但我没收到。", "ref": "Mon colis est indiqué comme livré, mais je ne l'ai pas reçu."}
+{"id": "daily-zhfr-11", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "可以刷卡吗？", "ref": "Je peux payer par carte ?"}
+{"id": "daily-zhfr-12", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我想退掉这个，这是小票。", "ref": "Je voudrais rendre cet article, voici le ticket de caisse."}
+{"id": "daily-zhfr-13", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我的手机丢了，想补办 SIM 卡。", "ref": "J'ai perdu mon téléphone, je voudrais refaire ma carte SIM."}
+{"id": "daily-zhfr-14", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "请问需要准备哪些材料？", "ref": "Quels documents dois-je préparer, s'il vous plaît ?"}
+{"id": "daily-zhfr-15", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我对花生过敏。", "ref": "Je suis allergique aux arachides.", "expect": ["arachide", "cacahuète", "cacahouète"]}
+{"id": "daily-zhfr-16", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "宽带什么时候能装好？", "ref": "Quand est-ce que la box internet sera installée ?"}
+{"id": "daily-zhfr-17", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我要寄一个包裹到中国。", "ref": "Je voudrais envoyer un colis en Chine."}
+{"id": "daily-zhfr-18", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "能帮我开一张发票吗？", "ref": "Vous pouvez me faire une facture ?", "expect": ["facture"]}
+{"id": "daily-zhfr-19", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我住在三楼，没有电梯。", "ref": "J'habite au deuxième étage, il n'y a pas d'ascenseur.", "expect": ["deuxième", "2e", "2ème"], "note": "文化差异：中国的三楼 = 法国的 2e étage"}
+{"id": "daily-zhfr-20", "cat": "daily", "src_lang": "zh", "tgt_lang": "fr", "src": "我的签证申请被拒了，我想知道原因。", "ref": "Ma demande de visa a été refusée, j'aimerais en connaître la raison."}
+{"id": "street-frzh-01", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Excusez-moi, vous savez où est la station de métro la plus proche ?", "ref": "不好意思，您知道最近的地铁站在哪吗？"}
+{"id": "street-frzh-02", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "C'est tout droit, puis la deuxième à gauche.", "ref": "一直往前走，然后第二个路口左转。", "expect": ["第二"]}
+{"id": "street-frzh-03", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "C'est à cinq minutes à pied.", "ref": "走路五分钟。"}
+{"id": "street-frzh-04", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Sur place ou à emporter ?", "ref": "堂食还是带走？", "expect": ["带走", "外带", "打包"]}
+{"id": "street-frzh-05", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Une baguette bien cuite, s'il vous plaît.", "ref": "请给我一根烤得透一点的法棍。"}
+{"id": "street-frzh-06", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous avez réservé ?", "ref": "您预订了吗？"}
+{"id": "street-frzh-07", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "L'addition, s'il vous plaît.", "ref": "麻烦结账。", "expect": ["结账", "买单", "账单"]}
+{"id": "street-frzh-08", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "La cuisine ferme à vingt-deux heures.", "ref": "厨房晚上十点停止点餐。"}
+{"id": "street-frzh-09", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Vous désirez autre chose ?", "ref": "您还需要别的吗？"}
+{"id": "street-frzh-10", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Attention, la ligne 4 est fermée ce week-end.", "ref": "注意，4号线这个周末停运。"}
+{"id": "street-frzh-11", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Je vous fais un petit prix.", "ref": "给您便宜点。", "expect": ["便宜", "优惠", "折", "友情价", "实惠"]}
+{"id": "street-frzh-12", "cat": "street", "src_lang": "fr", "tgt_lang": "zh", "src": "Le marché, c'est tous les dimanches matin.", "ref": "集市每周日上午开。"}
+{"id": "street-zhfr-01", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "请问厕所在哪里？", "ref": "Excusez-moi, où sont les toilettes ?"}
+{"id": "street-zhfr-02", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "我迷路了，能帮我看看地图吗？", "ref": "Je suis perdu, vous pouvez m'aider à regarder la carte ?"}
+{"id": "street-zhfr-03", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "这个多少钱？", "ref": "C'est combien ?"}
+{"id": "street-zhfr-04", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "我要一杯咖啡，带走。", "ref": "Un café à emporter, s'il vous plaît.", "expect": ["emporter"]}
+{"id": "street-zhfr-05", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "有素食的菜吗？", "ref": "Vous avez des plats végétariens ?"}
+{"id": "street-zhfr-06", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "我们四个人，有位子吗？", "ref": "On est quatre, vous avez une table ?"}
+{"id": "street-zhfr-07", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "这班车去埃菲尔铁塔吗？", "ref": "Ce bus va à la tour Eiffel ?"}
+{"id": "street-zhfr-08", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "可以帮我们拍张照吗？", "ref": "Vous pouvez nous prendre en photo ?"}
+{"id": "street-zhfr-09", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "不用找了。", "ref": "Gardez la monnaie.", "expect": ["monnaie"]}
+{"id": "street-zhfr-10", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "牛排要七分熟。", "ref": "La viande à point, s'il vous plaît.", "expect": ["à point"], "note": "七分熟 ≈ à point"}
+{"id": "street-zhfr-11", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "太贵了，能便宜点吗？", "ref": "C'est trop cher, vous pouvez faire un geste ?"}
+{"id": "street-zhfr-12", "cat": "street", "src_lang": "zh", "tgt_lang": "fr", "src": "下一站是哪里？", "ref": "C'est quoi le prochain arrêt ?"}
+{"id": "slang-frzh-01", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "C'est trop chelou, ce truc.", "ref": "这东西太奇怪了。", "expect": ["怪", "可疑", "诡异"]}
+{"id": "slang-frzh-02", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "J'ai la flemme d'y aller.", "ref": "我懒得去。", "expect": ["懒"]}
+{"id": "slang-frzh-03", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Ce film était ouf !", "ref": "这部电影太绝了！", "expect": ["疯", "棒", "绝", "牛", "厉害", "精彩", "震撼"]}
+{"id": "slang-frzh-04", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "On se capte plus tard ?", "ref": "晚点再联系？", "expect": ["联系", "见", "碰", "聊"]}
+{"id": "slang-frzh-05", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Il m'a posé un lapin.", "ref": "他放我鸽子了。", "expect": ["鸽子", "爽约", "没来", "白等", "空跑"]}
+{"id": "slang-frzh-06", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Je suis crevé.", "ref": "我累死了。", "expect": ["累", "疲"]}
+{"id": "slang-frzh-07", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "C'est pas la mer à boire.", "ref": "这没什么大不了的。", "expect": ["难", "大不了", "不算什么", "没什么"]}
+{"id": "slang-frzh-08", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Ça me saoule.", "ref": "这让我好烦。", "expect": ["烦"]}
+{"id": "slang-frzh-09", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Grave !", "ref": "绝对是！", "expect": ["对", "是", "没错", "当然", "绝对", "确实"]}
+{"id": "slang-frzh-10", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "T'inquiète, c'est réglé.", "ref": "别担心，搞定了。", "expect": ["担心", "放心"]}
+{"id": "slang-frzh-11", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Il a pété un câble.", "ref": "他气炸了。", "expect": ["炸", "崩溃", "发飙", "疯", "失控", "抓狂", "暴走", "发火", "火冒三丈"]}
+{"id": "slang-frzh-12", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Ça coûte un bras.", "ref": "这贵得要命。", "expect": ["贵", "不便宜", "不少钱", "离谱"]}
+{"id": "slang-frzh-13", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "C'est la galère pour trouver un appart à Paris.", "ref": "在巴黎找房子太难了。", "expect": ["难", "麻烦", "痛苦", "折腾", "头疼", "不容易"]}
+{"id": "slang-frzh-14", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Elle a un poil dans la main.", "ref": "她很懒。", "expect": ["懒", "不爱动", "懒惰", "懒散", "不勤快"]}
+{"id": "slang-frzh-15", "cat": "slang", "src_lang": "fr", "tgt_lang": "zh", "src": "Je kiffe trop cette chanson.", "ref": "我超爱这首歌。", "expect": ["爱", "喜欢"]}
+{"id": "slang-zhfr-01", "cat": "slang", "src_lang": "zh", "tgt_lang": "fr", "src": "我真的会谢。", "ref": "Non mais sérieux, merci du cadeau…", "note": "反讽：表面感谢，实际无语"}
+{"id": "slang-zhfr-02", "cat": "slang", "src_lang": "zh", "tgt_lang": "fr", "src": "这个项目太卷了。", "ref": "La compétition sur ce projet est vraiment intense.", "expect": ["compétit", "concurren", "pression", "intense", "course"]}
+{"id": "slang-zhfr-03", "cat": "slang", "src_lang": "zh", "tgt_lang": "fr", "src": "我今天摸鱼了。", "ref": "Aujourd'hui, j'ai glandé au boulot.", "expect": ["gland", "rien fait", "flemm", "flanc", "pas grand-chose", "traîn", "productif", "sérieusement", "au lieu de travailler", "pas bossé"]}
+{"id": "slang-zhfr-04", "cat": "slang", "src_lang": "zh", "tgt_lang": "fr", "src": "他就是个打工人。", "ref": "C'est juste un salarié comme les autres.", "expect": ["salari", "employ", "travaill", "boss"]}
+{"id": "slang-zhfr-05", "cat": "slang", "src_lang": "zh", "tgt_lang": "fr", "src": "绝了！", "ref": "C'est génial !", "expect": ["génial", "incroyable", "top", "dingue", "ouf", "parfait", "excellent", "énorme", "formidable"]}
+{"id": "asr-frzh-01", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "euh bonjour euh je voulais savoir si euh le poste est toujours disponible", "ref": "你好，我想知道这个职位是否还空缺。"}
+{"id": "asr-frzh-02", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "alors en fait ben on cherche quelqu'un qui qui peut commencer rapidement", "ref": "其实我们在找能尽快入职的人。"}
+{"id": "asr-frzh-03", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "vous avez fait des études de de data science c'est ça", "ref": "您学的是数据科学，对吧？"}
+{"id": "asr-frzh-04", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "on peut se voir mardi ou mercredi comme vous voulez", "ref": "周二或周三见都行，看您方便。", "expect": ["周二", "星期二"]}
+{"id": "asr-frzh-05", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "le salaire euh enfin la gratification c'est selon la loi", "ref": "工资，嗯，准确说是实习补贴，是按法律规定的。"}
+{"id": "asr-frzh-06", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "ah d'accord d'accord ok donc vous parlez chinois aussi", "ref": "哦，好的好的，所以您也会说中文。"}
+{"id": "asr-frzh-07", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "il faudrait que vous envoyez votre CV a notre RH", "ref": "您需要把简历发给我们的人力资源部。", "expect": ["简历"]}
+{"id": "asr-frzh-08", "cat": "asr", "src_lang": "fr", "tgt_lang": "zh", "src": "c'est un poste en CDI ou en CDD", "ref": "这是长期合同还是短期合同的职位？", "expect": ["长期", "无固定期限", "固定期限", "短期", "正式", "临时", "合同工"]}
+{"id": "asr-zhfr-01", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "嗯那个我我想问一下就是实习是在巴黎吗", "ref": "Je voulais vous demander : le stage est à Paris ?"}
+{"id": "asr-zhfr-02", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "我在法国读了一年的交换声", "ref": "J'ai fait une année d'échange en France.", "note": "同音错字：声=生"}
+{"id": "asr-zhfr-03", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "我会用派森和 SQL", "ref": "Je sais utiliser Python et SQL.", "expect": ["Python"], "note": "派森=Python"}
+{"id": "asr-zhfr-04", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "我下个月就可以入职了吧应该", "ref": "Je pense que je peux commencer le mois prochain."}
+{"id": "asr-zhfr-05", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "您说的那个那个项目是关于机器学习的吗", "ref": "Le projet dont vous parlez concerne l'apprentissage automatique ?"}
+{"id": "asr-zhfr-06", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "我的简力已经发给您了", "ref": "Je vous ai déjà envoyé mon CV.", "expect": ["CV"], "note": "同音错字：简力=简历"}
+{"id": "asr-zhfr-07", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "就是说数据清洗大概占了百分之七十的时间", "ref": "Le nettoyage des données représente environ soixante-dix pour cent du temps.", "expect": ["70", "soixante-dix"]}
+{"id": "asr-zhfr-08", "cat": "asr", "src_lang": "zh", "tgt_lang": "fr", "src": "对对对没错我之前在一家咨询公司实习过", "ref": "Oui, c'est ça, j'ai déjà fait un stage dans un cabinet de conseil."}
+{"id": "amb01a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Je vais prendre un avocat.", "ref": "我要一个牛油果。/ 我要请个律师。", "group": "amb01", "context": [], "with_context": false, "expect": ["牛油果", "鳄梨", "律师"]}
+{"id": "amb01b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Je vais prendre un avocat.", "ref": "我要一份牛油果。", "group": "amb01", "context": [{"src": "Qu'est-ce que vous prenez en entrée ?", "tgt": "您前菜点什么？"}], "with_context": true, "expect": ["牛油果", "鳄梨"]}
+{"id": "amb01c", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Je vais prendre un avocat.", "ref": "我要去请律师。", "group": "amb01", "context": [{"src": "Mon propriétaire refuse de me rendre ma caution.", "tgt": "我的房东拒绝退我押金。"}], "with_context": true, "expect": ["律师"]}
+{"id": "amb02a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu as vu la carte ?", "ref": "你看到菜单/地图/卡了吗？", "group": "amb02", "context": [], "with_context": false, "expect": ["菜单", "地图", "卡"]}
+{"id": "amb02b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu as vu la carte ?", "ref": "你看菜单了吗？", "group": "amb02", "context": [{"src": "On commande quoi ?", "tgt": "我们点什么？"}], "with_context": true, "expect": ["菜单"]}
+{"id": "amb02c", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu as vu la carte ?", "ref": "你看地图了吗？", "group": "amb02", "context": [{"src": "On est perdus, c'est où la rue de Rivoli ?", "tgt": "我们迷路了，里沃利街在哪？"}], "with_context": true, "expect": ["地图"]}
+{"id": "amb03a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "La note est arrivée.", "ref": "账单来了。/ 成绩出来了。", "group": "amb03", "context": [], "with_context": false, "expect": ["账单", "单", "成绩", "分数", "便条", "通知", "发票"]}
+{"id": "amb03b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "La note est arrivée.", "ref": "账单来了。", "group": "amb03", "context": [{"src": "On a fini de manger, on y va ?", "tgt": "我们吃完了，走吗？"}], "with_context": true, "expect": ["账单", "单"]}
+{"id": "amb03c", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "La note est arrivée.", "ref": "成绩出来了。", "group": "amb03", "context": [{"src": "Tu as eu combien à l'examen de stats ?", "tgt": "你统计考试考了多少分？"}], "with_context": true, "expect": ["成绩", "分数", "分"]}
+{"id": "amb04a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Il me manque une pièce.", "ref": "我缺一份材料。/ 我缺一枚硬币。/ 我缺一个零件。", "group": "amb04", "context": [], "with_context": false, "expect": ["材料", "文件", "证件", "硬币", "零件", "螺丝", "少了点"]}
+{"id": "amb04b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Il me manque une pièce.", "ref": "我还缺一份材料。", "group": "amb04", "context": [{"src": "Votre dossier pour le titre de séjour est presque complet.", "tgt": "您的居留证材料快齐了。"}], "with_context": true, "expect": ["材料", "文件", "证件"]}
+{"id": "amb04c", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Il me manque une pièce.", "ref": "我缺一枚硬币。", "group": "amb04", "context": [{"src": "Le distributeur de café ne prend que les pièces d'un euro.", "tgt": "咖啡机只收一欧元硬币。"}], "with_context": true, "expect": ["硬币", "币"]}
+{"id": "amb05a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "On fait un pot vendredi.", "ref": "我们周五办个小聚会。", "group": "amb05", "context": [], "with_context": false, "expect": ["聚", "喝", "酒会", "送别", "欢送", "盆", "罐"]}
+{"id": "amb05b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "On fait un pot vendredi.", "ref": "我们周五办个欢送小聚会。", "group": "amb05", "context": [{"src": "C'est le dernier jour de Marc dans l'équipe.", "tgt": "这是 Marc 在团队的最后一天。"}], "with_context": true, "expect": ["聚", "喝", "酒会", "送别", "欢送"]}
+{"id": "amb06a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu peux me passer la souris ?", "ref": "你能把鼠标递给我吗？", "group": "amb06", "context": [], "with_context": false, "expect": ["鼠标", "老鼠"]}
+{"id": "amb06b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Tu peux me passer la souris ?", "ref": "你能把鼠标递给我吗？", "group": "amb06", "context": [{"src": "Ton ordinateur est bloqué ?", "tgt": "你电脑卡住了？"}], "with_context": true, "expect": ["鼠标"]}
+{"id": "amb07a", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Le poste est encore ouvert ?", "ref": "这个职位还在招吗？", "group": "amb07", "context": [], "with_context": false, "expect": ["职位", "岗位", "邮局"]}
+{"id": "amb07b", "cat": "ambiguity", "src_lang": "fr", "tgt_lang": "zh", "src": "Le poste est encore ouvert ?", "ref": "这个职位还在招吗？", "group": "amb07", "context": [{"src": "J'ai vu votre offre de stage sur LinkedIn.", "tgt": "我在领英上看到了您的实习招聘。"}], "with_context": true, "expect": ["职位", "岗位"]}
+{"id": "amb10a", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "他走了。", "ref": "Il est parti.", "group": "amb10", "context": [], "with_context": false, "expect": ["parti", "décéd", "mort", "quitté"]}
+{"id": "amb10b", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "他走了。", "ref": "Il est parti.", "group": "amb10", "context": [{"src": "会议还没结束，Paul 去哪了？", "tgt": "La réunion n'est pas finie, où est Paul ?"}], "with_context": true, "expect": ["parti", "allé"]}
+{"id": "amb10c", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "他走了。", "ref": "Il est décédé.", "group": "amb10", "context": [{"src": "他爷爷病了很久。", "tgt": "Son grand-père était malade depuis longtemps."}], "with_context": true, "expect": ["décéd", "mort", "quitté", "disparu", "éteint"]}
+{"id": "amb11a", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "能帮我开一下吗？", "ref": "Vous pouvez m'aider à l'ouvrir ?", "group": "amb11", "context": [], "with_context": false, "expect": ["ouvr", "allum", "facture", "conduire"]}
+{"id": "amb11b", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "能帮我开一下吗？", "ref": "Vous pouvez m'aider à l'ouvrir ?", "group": "amb11", "context": [{"src": "这个窗户卡住了。", "tgt": "Cette fenêtre est coincée."}], "with_context": true, "expect": ["ouvr"]}
+{"id": "amb11c", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "能帮我开一下吗？", "ref": "Vous pouvez me la faire ?", "group": "amb11", "context": [{"src": "我需要报销，要一张发票。", "tgt": "J'ai besoin d'une facture pour me faire rembourser."}], "with_context": true, "expect": ["facture", "établir", "éditer", "émettre", "faire", "délivrer"]}
+{"id": "amb12a", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "你方便吗？", "ref": "Tu es disponible ?", "group": "amb12", "context": [], "with_context": false, "expect": ["disponible", "libre", "moment", "dispo", "pratique", "commode", "instant"]}
+{"id": "amb12b", "cat": "ambiguity", "src_lang": "zh", "tgt_lang": "fr", "src": "你方便吗？", "ref": "Tu es disponible ?", "group": "amb12", "context": [{"src": "我想和你聊一下实习的事。", "tgt": "J'aimerais te parler du stage."}], "with_context": true, "expect": ["disponible", "libre", "moment", "dispo"]}
+{"id": "english-enzh-01", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "Could you walk me through your resume?", "ref": "能给我讲讲你的简历吗？"}
+{"id": "english-enzh-02", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "What's your biggest weakness?", "ref": "你最大的缺点是什么？"}
+{"id": "english-enzh-03", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "We're a fast-paced startup, so priorities shift quickly.", "ref": "我们是一家节奏很快的创业公司，所以优先事项变化很快。"}
+{"id": "english-enzh-04", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "Tell me about a time you failed.", "ref": "说说你失败的一次经历。"}
+{"id": "english-enzh-05", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "How do you handle tight deadlines?", "ref": "你怎么应对紧迫的截止日期？"}
+{"id": "english-enzh-06", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "Are you comfortable presenting to stakeholders?", "ref": "你能自如地向利益相关方做汇报吗？"}
+{"id": "english-enzh-07", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "The role is fully remote, but we meet in person once a quarter.", "ref": "这个职位完全远程，但我们每季度线下见一次面。"}
+{"id": "english-enzh-08", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "We'll circle back once we've talked to all the candidates.", "ref": "等我们和所有候选人谈过之后会再联系你。"}
+{"id": "english-enzh-09", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "That's a great question, I'll have to get back to you on that.", "ref": "这个问题问得好，我之后再答复你。"}
+{"id": "english-enzh-10", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "Let's touch base next week.", "ref": "我们下周再碰一下。"}
+{"id": "english-enzh-11", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "I'm afraid the position has been filled.", "ref": "恐怕这个职位已经招到人了。"}
+{"id": "english-enzh-12", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "What are your salary expectations?", "ref": "你的期望薪资是多少？"}
+{"id": "english-enzh-13", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "Can you give me an example of how you used SQL in a real project?", "ref": "你能举个例子说明你在实际项目里怎么用 SQL 的吗？"}
+{"id": "english-enzh-14", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "Feel free to reach out if anything comes up.", "ref": "有什么事随时联系。"}
+{"id": "english-enzh-15", "cat": "english", "src_lang": "en", "tgt_lang": "zh", "src": "We're looking for someone who can hit the ground running.", "ref": "我们在找能马上上手的人。", "expect": ["上手", "立即", "马上", "立刻"]}
+{"id": "english-zhen-01", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我叫李明，正在找一份数据分析的实习。", "ref": "My name is Li Ming, and I'm looking for a data analysis internship."}
+{"id": "english-zhen-02", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我刚在法国完成了一年的交换学习。", "ref": "I just finished a one-year exchange program in France."}
+{"id": "english-zhen-03", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我最大的优点是学东西很快。", "ref": "My biggest strength is that I learn quickly."}
+{"id": "english-zhen-04", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我可以从二月开始全职实习。", "ref": "I can start a full-time internship in February."}
+{"id": "english-zhen-05", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "能请您再说一遍吗？", "ref": "Could you say that again, please?"}
+{"id": "english-zhen-06", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我在小组项目里负责数据清洗和建模。", "ref": "In the group project, I was responsible for data cleaning and modeling."}
+{"id": "english-zhen-07", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我对你们的产品很感兴趣。", "ref": "I'm very interested in your product."}
+{"id": "english-zhen-08", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "这个职位需要出差吗？", "ref": "Does this position require travel?"}
+{"id": "english-zhen-09", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "团队现在主要用什么技术栈？", "ref": "What tech stack does the team mainly use?"}
+{"id": "english-zhen-10", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我需要学校签实习协议。", "ref": "I need my school to sign an internship agreement."}
+{"id": "english-zhen-11", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我觉得我很适合这个岗位。", "ref": "I think I'm a great fit for this role."}
+{"id": "english-zhen-12", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "抱歉，我网络有点卡。", "ref": "Sorry, my connection is a bit laggy."}
+{"id": "english-zhen-13", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "什么时候能知道结果？", "ref": "When can I expect to hear back?"}
+{"id": "english-zhen-14", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "我以前用 Tableau 做过销售看板。", "ref": "I've built sales dashboards in Tableau before."}
+{"id": "english-zhen-15", "cat": "english", "src_lang": "zh", "tgt_lang": "en", "src": "谢谢您今天抽时间和我聊。", "ref": "Thank you for taking the time to talk with me today."}

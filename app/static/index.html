@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveTranslator</title>
+<style>
+:root{
+  --bg:#f6f5f2; --panel:#ffffff; --ink:#1d1d1f; --muted:#6e6e73; --line:#e4e2dc;
+  --them:#ffffff; --me:#e9f1ff; --accent:#2f6fed; --accent-ink:#fff; --ok:#1f9d55; --warn:#c2410c;
+  --live:#8a8a8f; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+  --fs:22px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111214; --panel:#1a1b1e; --ink:#ececee; --muted:#9a9aa1; --line:#2a2b30;
+    --them:#1d1e22; --me:#18243d; --accent:#5b8cff; --live:#8a8a93; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111214; --panel:#1a1b1e; --ink:#ececee; --muted:#9a9aa1; --line:#2a2b30;
+  --them:#1d1e22; --me:#18243d; --accent:#5b8cff; --live:#8a8a93; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI","Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;display:flex;flex-direction:column}
+button,select,textarea{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.brand{font-weight:700;letter-spacing:.2px;white-space:nowrap}
+.status{flex:1;min-width:0;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warn);margin-right:6px;vertical-align:1px}
+.status.ready .dot{background:var(--ok)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+.seg button{border:0;background:transparent;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.iconbtn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+.iconbtn:hover{border-color:var(--accent)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.controls label{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+.controls select{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:5px 8px;max-width:260px}
+#outdev{max-width:150px}
+#source{max-width:210px}
+.spacer{flex:1}
+#go{position:relative;border:0;border-radius:999px;padding:9px 22px;background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer;min-width:120px}
+#go.running{background:#d93636}
+#go:disabled{opacity:.45;cursor:not-allowed}
+.meter{width:70px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
+.meter.speech i{background:var(--accent)}
+.hint{padding:6px 16px;font-size:13px;color:var(--muted)}
+main{flex:1;overflow-y:auto;padding:16px;scroll-behavior:smooth}
+.feed{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.empty{max-width:640px;margin:8vh auto;color:var(--muted);text-align:center;line-height:1.9}
+.empty b{color:var(--ink)}
+.card{max-width:82%;border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow);background:var(--them);align-self:flex-start}
+.card.me{background:var(--me);align-self:flex-end}
+.card .who{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.card .src{color:var(--muted);font-size:calc(var(--fs)*.68);margin-top:2px}
+.card .tgt{font-size:var(--fs);line-height:1.4;margin-top:4px;font-weight:500;min-height:1em}
+.card.live .src{color:var(--live);font-style:italic}
+.card.live .src::after{content:"▍";animation:blink 1s steps(2) infinite;margin-left:2px}
+.card .err{color:var(--warn);font-size:13px}
+.card .act{margin-left:auto;display:flex;gap:4px}
+.card .act button{border:0;background:transparent;cursor:pointer;color:var(--muted);padding:0 4px;font-size:14px}
+.card .act button:hover{color:var(--accent)}
+.card.speaking{outline:2px solid var(--accent)}
+.card.unsure{border-color:#e9a39b}
+.typing::after{content:"…";color:var(--muted)}
+@keyframes blink{50%{opacity:0}}
+footer{border-top:1px solid var(--line);background:var(--panel);padding:10px 16px}
+.composer{max-width:980px;margin:0 auto;display:flex;gap:8px}
+.composer textarea{flex:1;resize:none;height:44px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.composer button{border:0;border-radius:12px;padding:0 18px;background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#2b2b30;color:#fff;padding:9px 14px;border-radius:10px;font-size:14px;max-width:min(92vw,640px);box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+/* subtitle mode: only the last two lines, large text — fits next to a video-call window */
+body.subtitle .controls, body.subtitle footer, body.subtitle .hint{display:none}
+body.subtitle #subExit{display:inline-block!important}
+body.subtitle .card{max-width:100%;align-self:stretch}
+body.subtitle .feed > .card:not(:nth-last-child(-n+2)){display:none}
+body.subtitle .card .tgt{font-size:calc(var(--fs)*1.5)}
+@media (max-width:640px){
+  header{flex-wrap:wrap}
+  .status{order:3;flex-basis:100%}
+  .card{max-width:96%}
+  .controls select{max-width:180px}
+}
+</style>
+<link rel="stylesheet" href="/static/card.css">
+<script src="/static/card.js"></script>
+</head>
+<body>
+<header>
+  <div class="brand">🌐 LiveTranslator</div>
+  <div class="status" id="status"><span class="dot"></span><span id="statusText">Connecting…</span></div>
+  <div class="seg" id="langSeg" title="The other person's language">
+    <button data-lang="fr" class="on">ZH ⇄ FR</button><button data-lang="en">ZH ⇄ EN</button>
+  </div>
+  <button class="iconbtn" id="subExit" style="display:none">Exit subtitles</button>
+  <a class="iconbtn" href="/history" target="_blank" title="Review past conversations like a chat history, with confidence cards" style="text-decoration:none">📒 Review</a>
+</header>
+
+<div class="controls">
+  <div class="seg" id="modeSeg">
+    <button data-mode="auto" class="on" title="Detects who is speaking: Chinese → foreign language (spoken aloud), foreign language → Chinese">🗣 Conversation</button>
+    <button data-mode="listen" title="Only translate what the other person says into Chinese">👂 Listen</button>
+    <button data-mode="speak" title="Only translate your Chinese into the foreign language">🎤 Speak</button>
+  </div>
+  <label>Input
+    <select id="source"></select>
+  </label>
+  <label id="listenLangWrap" style="display:none">Their language
+    <select id="listenLang"><option value="auto">Auto</option><option value="fr">French</option><option value="en">English</option></select>
+  </label>
+  <label><input type="checkbox" id="speak" checked> Speak via</label>
+  <select id="outdev" title="Where spoken translations are played (choose VB-Cable for video calls)"></select>
+  <div class="spacer"></div>
+  <div class="meter" id="meter"><i></i></div>
+  <button id="go" disabled>▶ Start</button>
+</div>
+<div class="hint" id="hint"></div>
+
+<main id="main">
+  <div class="feed" id="feed">
+    <div class="empty" id="empty">
+      <p><b>Try it before your interview:</b> press <b>Start</b> and say in Chinese “你好，我是来面试实习的学生”.</p>
+      <p>Video interview (Teams / Zoom / Meet)? Choose <b>Listen</b> with input <b>System audio</b> — what the interviewer says becomes live Chinese subtitles.<br>
+      When you answer, read the French on the blue card yourself — it sounds more natural than the synthetic voice.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="composer">
+    <textarea id="text" placeholder="Type Chinese, French or English to translate — Enter to send, Shift+Enter for a new line"></textarea>
+    <button id="send">Translate</button>
+  </div>
+  <div style="max-width:980px;margin:8px auto 0;display:flex;gap:6px;flex-wrap:wrap">
+    <button class="iconbtn" id="fsDown" title="Smaller text">A−</button>
+    <button class="iconbtn" id="fsUp" title="Larger text">A+</button>
+    <button class="iconbtn" id="subtitle" title="Show only the last two lines in large text (Esc to exit)">Subtitles</button>
+    <button class="iconbtn" id="theme" title="Toggle dark/light">Dark/Light</button>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="export" title="Download this conversation as text">Export</button>
+    <button class="iconbtn" id="clear" title="Clear the screen and translation context">Clear</button>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const feed = $('#feed'), main = $('#main');
+const LANG = {zh:'Chinese', fr:'French', en:'English'};
+const state = {ready:false, running:false, mode:'auto', other:'fr', cards:new Map()};
+
+function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v);}catch(e){ return null; } }
+
+/* ---------- preferences ---------- */
+let fs = parseInt(store('lt_fs')) || 22;
+const setFs = v => { fs = Math.max(14, Math.min(48, v)); document.documentElement.style.setProperty('--fs', fs+'px'); store('lt_fs', fs); };
+setFs(fs);
+const savedTheme = store('lt_theme'); if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+
+function toast(msg, ms=4000){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), ms); }
+
+function setStatus(text, ready){
+  $('#statusText').textContent = text;
+  $('#status').classList.toggle('ready', !!ready);
+  $('#status').title = text;
+  state.ready = !!ready;
+  $('#go').disabled = !state.ready;
+}
+
+/* ---------- cards ---------- */
+function nearBottom(){ return main.scrollHeight - main.scrollTop - main.clientHeight < 160; }
+function scroll(force){ if (force || nearBottom()) requestAnimationFrame(()=> main.scrollTop = main.scrollHeight); }
+
+function card(id, who){
+  let c = state.cards.get(id);
+  if (!c){
+    $('#empty')?.remove();
+    const stick = nearBottom();
+    const el = document.createElement('div');
+    el.className = 'card live ' + (who||'them');
+    el.innerHTML = `<div class="who"><span class="label"></span><span class="meta"></span><span class="act"></span></div><div class="src"></div><div class="tgt"></div><div class="err"></div><div class="attrbox"></div>`;
+    feed.appendChild(el);
+    c = {el, src:el.querySelector('.src'), tgt:el.querySelector('.tgt'), label:el.querySelector('.label'),
+         meta:el.querySelector('.meta'), act:el.querySelector('.act'), err:el.querySelector('.err'), attr:el.querySelector('.attrbox'), text:'', trans:'', lang:'', tlang:''};
+    state.cards.set(id, c);
+    scroll(stick);
+  }
+  if (who){ c.el.classList.toggle('me', who==='me'); c.el.classList.toggle('them', who!=='me'); }
+  return c;
+}
+function label(c, who, lang){ c.label.textContent = (who==='me' ? 'Me' : 'Them') + ' · ' + (LANG[lang]||lang||''); }
+
+function addActions(id, c){
+  c.act.innerHTML = '';
+  const b1 = document.createElement('button'); b1.textContent='🔊'; b1.title='Speak translation';
+  b1.onclick = () => post('/api/speak', {text:c.trans, lang:c.tlang, id});
+  const b2 = document.createElement('button'); b2.textContent='⧉'; b2.title='Copy translation';
+  b2.onclick = () => { navigator.clipboard?.writeText(c.trans); toast('Copied', 1200); };
+  if (c.tlang && c.tlang !== 'zh') c.act.appendChild(b1);
+  c.act.appendChild(b2);
+}
+
+function onEvent(ev){
+  switch(ev.type){
+    case 'status': setStatus(ev.text, ev.ready); break;
+    case 'error': toast('⚠ ' + ev.text, 8000); break;
+    case 'running': setRunning(ev.running, ev); break;
+    case 'level': {
+      const m = $('#meter'); m.querySelector('i').style.width = Math.round(ev.v*100)+'%'; m.classList.toggle('speech', ev.speech); break; }
+    case 'speech_start': break;
+    case 'partial': { const c = card(ev.id); c.src.textContent = ev.text; label(c, ev.lang==='zh'?'me':'them', ev.lang); scroll(); break; }
+    case 'cancel': { const c = state.cards.get(ev.id); if (c && !c.text){ c.el.remove(); state.cards.delete(ev.id);} break; }
+    case 'final': {
+      const c = card(ev.id, ev.who); c.el.classList.remove('live');
+      c.text = ev.text; c.lang = ev.lang; c.src.innerHTML = highlightWords(ev.text, ev.weak_words);
+      label(c, ev.who, ev.lang);
+      c.meta.textContent = ev.typed ? '⌨' : '';
+      c.tgt.classList.add('typing'); scroll(); break; }
+    case 'trans_delta': { const c = card(ev.id); c.tgt.classList.remove('typing'); c.trans += ev.delta; c.tgt.textContent = c.trans; scroll(); break; }
+    case 'trans_done': {
+      const c = card(ev.id); c.tgt.classList.remove('typing');
+      if (ev.error){ c.err.textContent = ev.error; break; }
+      c.trans = ev.text; c.tlang = ev.lang; c.tgt.textContent = ev.text;
+      c.tgt.lang = ev.lang;
+      if (ev.mt_ms) c.meta.textContent = (c.meta.textContent ? c.meta.textContent+' ' : '') + (ev.mt_ms/1000).toFixed(1)+'s';
+      if (ev.card){
+        c.card = ev.card;
+        c.label.insertAdjacentHTML('afterend', ' ' + confBadge(ev.conf));
+        const b = c.el.querySelector('.badge');
+        b.onclick = () => { c.attr.innerHTML = c.attr.innerHTML ? '' : attrCardHTML(c.card); };
+        if (ev.conf != null && ev.conf < 0.6) c.el.classList.add('unsure');
+      }
+      addActions(ev.id, c); scroll(); break; }
+    case 'speaking': { const c = state.cards.get(ev.id); if (c) c.el.classList.toggle('speaking', ev.on); break; }
+  }
+}
+
+/* ---------- network ---------- */
+async function post(url, body){
+  try{
+    const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body||{})});
+    const j = await r.json(); if (!j.ok && j.error) toast('⚠ '+j.error, 7000); return j;
+  }catch(e){ toast('⚠ Cannot reach the local server — is the console window still open?'); }
+}
+function connect(){
+  const ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onmessage = m => onEvent(JSON.parse(m.data));
+  ws.onclose = () => { setStatus('Disconnected from local server, reconnecting…', false); setTimeout(connect, 1500); };
+}
+
+async function init(){
+  try{
+    const s = await (await fetch('/api/state')).json();
+    setStatus(s.status, s.ready);
+    setOther(s.other_lang, false);
+    const src = $('#source');
+    src.innerHTML = '';
+    const def = s.inputs.find(d=>d.default);
+    src.add(new Option('🎙 Microphone (default)', 'mic:default'));
+    s.inputs.forEach(d => src.add(new Option('🎙 ' + d.name, 'mic:'+d.id)));
+    src.add(new Option('🔈 System audio (video calls)', 'system'));
+    const od = $('#outdev'); od.innerHTML = '';
+    od.add(new Option('Default speakers', 'default'));
+    (s.outputs||[]).forEach(d => od.add(new Option(d.name, String(d.id))));
+    if (s.output_device != null && [...od.options].some(o=>o.value===String(s.output_device))) od.value = String(s.output_device);
+    const saved = store('lt_src'); if (saved && [...src.options].some(o=>o.value===saved)) src.value = saved;
+    for (const ev of s.history) onEvent(ev);
+    for (const [id,c] of state.cards) { c.el.classList.remove('live'); c.tgt.classList.remove('typing'); }
+    if (s.running) setRunning(true, {opts:s.opts});
+  }catch(e){ setStatus('Cannot reach the local server', false); }
+  connect();
+}
+
+/* ---------- controls ---------- */
+function setOther(lang, send=true){
+  state.other = lang;
+  document.querySelectorAll('#langSeg button').forEach(b => b.classList.toggle('on', b.dataset.lang===lang));
+  if (send) post('/api/lang', {other_lang: lang});
+  updateHint();
+}
+function setMode(m){
+  state.mode = m;
+  document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode===m));
+  $('#listenLangWrap').style.display = m==='listen' ? '' : 'none';
+  if (m==='listen' && store('lt_src') == null) $('#source').value = 'system';
+  updateHint();
+}
+function updateHint(){
+  const o = LANG[state.other];
+  $('#hint').textContent = {
+    auto: `Conversation: you speak Chinese → shown in ${o} and spoken aloud; they speak ${o} → shown in Chinese. Put the computer between you.`,
+    listen: `Listen: what the other person says becomes live Chinese subtitles. For video calls choose input “System audio” and wear headphones.`,
+    speak: `Speak: only your Chinese is recognised and translated into ${o}. Read the blue card yourself or let it speak.`,
+  }[state.mode];
+}
+function setRunning(on, ev){
+  state.running = on;
+  const b = $('#go'); b.classList.toggle('running', on); b.textContent = on ? '■ Stop' : '▶ Start';
+  if (on && ev && ev.device) toast('Listening: ' + ev.device, 2500);
+  if (!on){ $('#meter i').style.width = '0'; }
+}
+
+document.querySelectorAll('#langSeg button').forEach(b => b.onclick = () => setOther(b.dataset.lang));
+document.querySelectorAll('#modeSeg button').forEach(b => b.onclick = () => { setMode(b.dataset.mode); if (state.running) start(); });
+$('#source').onchange = e => { store('lt_src', e.target.value); if (state.running) start(); };
+$('#go').onclick = () => state.running ? post('/api/stop') : start();
+function start(){
+  const v = $('#source').value;
+  post('/api/start', {
+    mode: state.mode, other_lang: state.other,
+    source: v === 'system' ? 'system' : 'mic',
+    device: v.startsWith('mic:') ? v.slice(4) : null,
+    listen_lang: $('#listenLang').value,
+    speak: $('#speak').checked,
+  });
+}
+$('#outdev').onchange = e => post('/api/output', {device: e.target.value});
+$('#speak').onchange = () => { if (state.running) start(); };
+function send(){
+  const t = $('#text').value.trim(); if (!t) return;
+  post('/api/translate', {text:t, speak:$('#speak').checked}); $('#text').value=''; scroll(true);
+}
+$('#send').onclick = send;
+$('#text').addEventListener('keydown', e => { if (e.key==='Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); send(); } });
+$('#subExit').onclick = () => document.body.classList.remove('subtitle');
+$('#fsUp').onclick = () => setFs(fs+2);
+$('#fsDown').onclick = () => setFs(fs-2);
+$('#subtitle').onclick = () => { document.body.classList.toggle('subtitle'); scroll(true); };
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.body.classList.remove('subtitle'); });
+$('#theme').onclick = () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+  const nxt = cur==='dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = nxt; store('lt_theme', nxt);
+};
+$('#clear').onclick = async () => { feed.innerHTML=''; state.cards.clear(); await post('/api/reset'); };
+$('#export').onclick = () => {
+  const lines = [];
+  for (const c of state.cards.values()){
+    if (!c.text) continue;
+    lines.push(`[${c.el.classList.contains('me')?'Me':'Them'}] ${c.text}`, `   → ${c.trans}` + (c.card && c.card.confidence!=null ? `  (confidence ${Math.round(c.card.confidence*100)}%)` : ''), '');
+  }
+  const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `conversation_${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}.txt`; a.click();
+};
+setMode('auto');
+init();
+</script>
+</body>
+</html>
