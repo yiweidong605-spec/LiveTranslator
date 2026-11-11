@@ -87,8 +87,9 @@ STEP="s3-mirror"
 echo "== 2/5 RustFS buckets (incremental)"
 export RCLONE_CONFIG_RUSTFS_TYPE=s3 RCLONE_CONFIG_RUSTFS_PROVIDER=Other
 export RCLONE_CONFIG_RUSTFS_ENDPOINT="${LT_BACKUP_S3_ENDPOINT:-http://127.0.0.1:9000}"
-export RCLONE_CONFIG_RUSTFS_ACCESS_KEY_ID="$(envval S3_ACCESS_KEY)"
-export RCLONE_CONFIG_RUSTFS_SECRET_ACCESS_KEY="$(envval S3_SECRET_KEY)"
+RCLONE_CONFIG_RUSTFS_ACCESS_KEY_ID="$(envval S3_ACCESS_KEY)"
+RCLONE_CONFIG_RUSTFS_SECRET_ACCESS_KEY="$(envval S3_SECRET_KEY)"
+export RCLONE_CONFIG_RUSTFS_ACCESS_KEY_ID RCLONE_CONFIG_RUSTFS_SECRET_ACCESS_KEY
 export RCLONE_CONFIG_RUSTFS_FORCE_PATH_STYLE=true
 for b in mlflow lt-logs; do
   rclone sync "rustfs:$b" "$STAGE/s3/$b" --exclude "raw/_check/**" --fast-list --stats-one-line --stats 0 \

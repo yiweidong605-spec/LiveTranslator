@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import os
 import re
-import shutil
 import subprocess
 import sys
 import time
@@ -108,7 +107,7 @@ def step_piper():
     except Exception as e:
         print(f"⚠ Piper 不可用（{e}），将使用 Windows 自带语音。")
         return
-    for lang, name in voices.items():
+    for name in voices.values():
         if (out / f"{name}.onnx").exists():
             print(f"✓ {name} 已存在，跳过")
             continue

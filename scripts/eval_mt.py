@@ -131,7 +131,7 @@ def run_model(model: str, items: list[dict], tcfg: dict, log) -> list[dict]:
 
 # ----------------------------------------------------------------------------- 打分
 def score_rows(rows: list[dict]):
-    from sacrebleu.metrics import BLEU, CHRF
+    from sacrebleu.metrics import CHRF
 
     chrf = CHRF()
     for r in rows:

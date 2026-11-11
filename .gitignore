@@ -25,4 +25,11 @@ infra/platform/.env
 infra/platform/sync-credentials.env
 infra/platform/backup-credentials.env
 infra/platform/backup/status/*.json
+infra/platform/deploy/status/*
+!infra/platform/deploy/status/.gitkeep
+infra/platform/airflow/logs/*
+!infra/platform/airflow/logs/.gitkeep
+*.tmp
+.pytest_cache/
+.ruff_cache/
 secrets/

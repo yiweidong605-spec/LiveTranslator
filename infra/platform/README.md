@@ -42,6 +42,22 @@ by hand (no background process); option 3 checks the connection and that the key
 - Differences from the official compose file: LocalExecutor instead of Celery/Redis, reuses the platform
   PostgreSQL, random admin password, API server bound to 127.0.0.1.
 
+## Deployment (CI/CD, pull-based)
+```
+git push main → GitHub Actions: ruff · shellcheck · compose config · gitleaks · unit tests · DAG integrity
+             → all green → branch "deploy" moves to that commit
+mini PC: lt-deploy.timer (every 5 min) → deploy/deploy.sh → git fetch deploy → apply
+```
+- `~/platform` is a link to `~/LiveTranslator/infra/platform`, a clone that follows branch `deploy`
+  (read-only deploy key, GitHub's host key checked against its published fingerprint).
+- DAG changes need nothing; compose/Dockerfile changes → `docker compose up -d --build`; if that
+  fails the previous commit is restored and started again, and the broken commit is not retried.
+- Never edit files on the mini PC: the deploy refuses to run over local edits. Change them on the
+  desktop, push, and let CI deploy them.
+- One-time switch from the old scp'd folder: `bash ~/platform/deploy/install-deploy.sh`
+- `journalctl -u lt-deploy -n 30` · `cat ~/platform/deploy/status/last-deploy.json` · deploy now:
+  `bash ~/platform/deploy/deploy.sh --verbose`. Health runs in MLflow carry the tag `deployed_commit`.
+
 ## Backups (restic, daily 08:00)
 `bash backup/install-backup.sh` once: installs restic + rclone, creates `/srv/backup/{restic,staging}`,
 adds `RESTIC_PASSWORD` to `.env` (**also keep it in a password manager**), installs the systemd timer

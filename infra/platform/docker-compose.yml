@@ -39,6 +39,7 @@ x-airflow-common: &airflow-common
     - ./airflow/config:/opt/airflow/config
     - ./airflow/plugins:/opt/airflow/plugins
     - ./backup/status:/opt/airflow/backup-status:ro   # written by backup/backup.sh, read by the healthcheck
+    - ./deploy/status:/opt/airflow/deploy-status:ro   # written by deploy/deploy.sh (which commit is running)
   user: "${AIRFLOW_UID:-50000}:0"
   restart: unless-stopped
   depends_on: &airflow-common-depends-on

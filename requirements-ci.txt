@@ -1,0 +1,8 @@
+# What the CI 'unit' job installs (the app's heavy GPU dependencies are not needed for the tests)
+pytest>=8
+ruff>=0.6
+pyyaml
+requests
+boto3
+pyarrow
+moto[server]>=5
