@@ -35,7 +35,11 @@ if ! ssh-keygen -F github.com >/dev/null 2>&1; then
 fi
 echo "  ✓ github.com host key matches the published fingerprint"
 
-until ssh -T github-lt 2>&1 | grep -q "successfully authenticated"; do
+# GitHub always ends "ssh -T" with exit code 1 (no shell access), so look at the text, not the exit code
+# (with pipefail, "ssh … | grep -q" would count as failed even when grep matches).
+gh_auth() { ssh -T -o ConnectTimeout=10 github-lt 2>&1 || true; }
+until out="$(gh_auth)"; grep -q "successfully authenticated" <<< "$out"; do
+  echo "  GitHub answered: ${out:-nothing (no connection: is outbound SSH, port 22, blocked on this network?)}"
   cat <<MSG
 
   Add this key on GitHub: repository $GH_REPO → Settings → Deploy keys → Add deploy key
