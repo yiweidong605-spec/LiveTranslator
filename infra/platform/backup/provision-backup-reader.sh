@@ -23,7 +23,8 @@ REPO=/srv/backup/restic
 echo "== user and group"
 groupadd -f ltbackup
 if id backup-reader >/dev/null 2>&1; then echo "  backup-reader exists"; else
-  useradd --system --gid ltbackup --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin backup-reader
+  # fixed uid 1990: the default "next free system uid" (999) collides with the postgres container's uid
+  useradd --system --uid 1990 --gid ltbackup --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin backup-reader
   echo "  + backup-reader (no password, no shell)"
 fi
 

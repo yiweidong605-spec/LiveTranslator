@@ -30,8 +30,15 @@ if [ -z "$accepted" ]; then info "no successful logins logged"; else
   # "Accepted publickey for USER from IP port N ssh2: ED25519 SHA256:…"
   awk '{print $4, $6, $2, $NF}' <<< "$accepted" | sort | uniq -c | sort -rn \
     | awk '{printf "    %5d× %-14s from %-15s %s %s\n", $1, $2, $3, $4, $5}'
-  grep -q '^Accepted password' <<< "$accepted" && bad "a PASSWORD login succeeded — password logins should be off" \
-    || ok "every login used an SSH key"
+  pw="$(journalctl -t sshd -t sshd-session --since "$DAYS days ago" -o short-iso 2>/dev/null | grep 'Accepted password' || true)"
+  if [ -z "$pw" ]; then ok "every login used an SSH key"
+  else
+    hard="$(stat -c %Y /etc/ssh/sshd_config.d/01-hardening.conf 2>/dev/null || echo 0)"
+    late="$(awk '{print $1}' <<< "$pw" | while read -r t; do [ "$(date -d "$t" +%s)" -gt "$hard" ] && echo "$t"; done)"
+    info "password logins: $(awk '{print substr($1,1,16)}' <<< "$pw" | tr '\n' ' ')"
+    if [ -n "$late" ]; then bad "a PASSWORD login succeeded after password logins were switched off"
+    else ok "password logins only before the SSH hardening ($(date -d "@$hard" '+%m-%d %H:%M')), none since"; fi
+  fi
   outside="$(awk '{print $6}' <<< "$accepted" | sort -u | grep -Ev "$TRUSTED" || true)"
   if [ -n "$outside" ]; then bad "logins from outside your tailnet/LAN: $(tr '\n' ' ' <<< "$outside")"
   else ok "all logins came from your tailnet or the apartment LAN"; fi
@@ -45,7 +52,7 @@ else
   [ -n "$ext" ] && bad "failed attempts from outside: SSH should not be reachable from there (check ufw)" \
     || ok "failed attempts only from your own devices (typos, old keys)"
 fi
-info "recent sessions:"; last -n 8 2>/dev/null | head -8 | sed 's/^/      /'
+info "recent sessions:"; { wtmpdb last -n 8 2>/dev/null || last -n 8 2>/dev/null; } | grep -v '^$' | head -8 | sed 's/^/      /'
 
 hdr "2/8 accounts and admin rights"
 root_like="$(awk -F: '$3 == 0 && $1 != "root" {print $1}' /etc/passwd)"
@@ -92,10 +99,17 @@ dps="$(docker ps --format '{{.Names}}|{{.Image}}|{{.Ports}}' 2>/dev/null)"
 grep -v '^lt-platform-' <<< "$dps" | grep -q . && bad "containers that are not part of the platform" || ok "only platform containers"
 grep -E '0\.0\.0\.0:|\[::\]:' <<< "$dps" >/dev/null && bad "a container port is published on all interfaces (bypasses ufw)" \
   || ok "container ports bound to 127.0.0.1 only"
-custom="$(find /etc/systemd/system -maxdepth 1 -type f \( -name '*.service' -o -name '*.timer' \) -printf '%f ' 2>/dev/null)"
+# snap.* units are written by snapd for installed snaps: judged by publisher below instead
+custom="$(find /etc/systemd/system -maxdepth 1 -type f \( -name '*.service' -o -name '*.timer' \) ! -name 'snap.*' -printf '%f ' 2>/dev/null)"
 info "self-installed systemd units: ${custom:-none}"
 [ -z "$(tr ' ' '\n' <<< "$custom" | grep -vE '^(lt-backup|lt-deploy)\.(service|timer)$|^$')" ] \
   && ok "no unknown systemd services" || bad "unknown units in /etc/systemd/system: review them"
+if command -v snap >/dev/null; then
+  snaps="$(snap list 2>/dev/null | awk 'NR > 1 {print $1, $5}')"
+  info "installed snaps (name publisher): $(tr '\n' ',' <<< "$snaps" | sed 's/,$//; s/,/, /g')"
+  unv="$(awk '$2 !~ /^canonical/' <<< "$snaps" || true)"
+  [ -z "$unv" ] && ok "all snaps are published by Canonical" || bad "snaps not from Canonical: $(awk '{print $1}' <<< "$unv" | tr '\n' ' ')"
+fi
 crons=""
 while IFS=: read -r u _; do c="$(crontab -l -u "$u" 2>/dev/null | grep -Ev '^\s*(#|$)')"; [ -n "$c" ] && crons+="$u: $c"$'\n'; done < /etc/passwd
 [ -z "$crons" ] && ok "no user crontabs" || { bad "user crontabs found:"; sed 's/^/      /' <<< "$crons"; }
@@ -103,7 +117,7 @@ extra_cron="$(find /etc/cron.d /etc/cron.daily /etc/cron.hourly -type f -newer /
 [ -z "$extra_cron" ] && ok "no cron jobs added after installation" || info "cron files changed since install (often package updates): $(tr '\n' ' ' <<< "$extra_cron")"
 
 hdr "7/8 processes"
-info "top CPU:"; ps -eo pcpu,user,comm --sort=-pcpu | head -6 | sed 's/^/      /'
+info "top CPU:"; ps -eo pcpu,user:14,comm --sort=-pcpu | grep -v ' ps$' | head -6 | sed 's/^/      /'
 sus="$(find /proc/[0-9]*/exe -maxdepth 0 -printf '%p -> %l\n' 2>/dev/null | grep -E ' -> (/tmp/|/dev/shm/|/var/tmp/)|\(deleted\)' \
   | grep -vE 'snap|containerd|memfd:runc' || true)"
 [ -z "$sus" ] && ok "no programs running from /tmp, /dev/shm or deleted files" || { bad "processes running from suspicious places:"; sed 's/^/      /' <<< "$sus"; }
