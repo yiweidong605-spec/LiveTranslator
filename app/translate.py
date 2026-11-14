@@ -26,6 +26,23 @@ LANG_ZH = {"zh": "中文", "fr": "法语", "en": "英语"}
 LANG_EN = {"zh": "Chinese", "fr": "French", "en": "English"}
 
 
+# Bump when the prompt changes, so evaluations (MLflow param "prompt_version") can be compared.
+#   v1  2026-11-01  first prompt
+#   v2  2026-11-14  slang / idioms are translated by meaning (literal "这很严重！我此刻正在水下" for
+#                   "C'est grave bien ! Je suis sous l'eau"). The examples below are deliberately NOT
+#                   taken from the test set, otherwise the evaluation would measure memorisation.
+PROMPT_VERSION = "v2"
+
+IDIOM_EXAMPLES = {
+    ("fr", "zh"): ["Ça déchire ! → 太酷了！", "Il m'a posé un lapin. → 他放我鸽子了。",
+                   "J'ai la pêche aujourd'hui. → 我今天精神特别好。"],
+    ("zh", "fr"): ["加油！ → Bon courage !", "随便，你定吧。 → Comme tu veux, c'est toi qui choisis.",
+                   "他放我鸽子了。 → Il m'a posé un lapin."],
+    ("en", "zh"): ["Break a leg! → 祝你好运！", "I'm swamped. → 我忙得不可开交。"],
+    ("zh", "en"): ["加油！ → You've got this!", "他放我鸽子了。 → He stood me up."],
+}
+
+
 def load_glossary(path: Path) -> list[tuple[str, dict]]:
     """每行：中文 = 法语 = 英语（英语可省略）。"""
     items = []
@@ -173,22 +190,27 @@ class Translator:
             return [{"role": "user", "content": "\n".join(parts)}]
 
         # 通用对话模型
-        polite = ""
+        rules = [
+            "只输出译文本身，不要解释、不要加引号、不要回答问题、不要加拼音或注释。",
+            "原文来自语音识别，可能有错字、断句不全或口头禅，请根据上下文理解后翻译成通顺的话，口头禅可省略。",
+            "保持原意和语气，不要擅自增加内容。",
+            "俚语、习语、口头说法按实际意思翻成对方语言里对应的说法，不要逐字直译；"
+            "但要看语境，词语用的是本义时照本义翻（例如 La situation est grave 就是“情况很严重”）。",
+        ]
         if tgt == "fr":
-            polite = "对面试官/陌生人用 vous，用词得体自然，像母语者在职场里说话。"
+            rules.append("对面试官/陌生人用 vous，用词得体自然，像母语者在职场里说话。")
         elif tgt == "en":
-            polite = "用自然、礼貌的职场口语。"
+            rules.append("用自然、礼貌的职场口语。")
+        elif tgt == "zh":
+            rules.append("使用简体中文。")
         sys_prompt = (
             f"你是一名专业的同声传译员，场景是：{self.scenario}。\n"
             f"任务：把用户发来的{LANG_ZH[src]}口语，翻译成地道、自然的{LANG_ZH[tgt]}口语。\n"
-            "规则：\n"
-            "1. 只输出译文本身，不要解释、不要加引号、不要回答问题、不要加拼音或注释。\n"
-            "2. 原文来自语音识别，可能有错字、断句不全或口头禅，请根据上下文理解后翻译成通顺的话，口头禅可省略。\n"
-            "3. 保持原意和语气，不要擅自增加内容。\n"
-            f"4. {polite}"
+            "规则：\n" + "\n".join(f"{i}. {r}" for i, r in enumerate(rules, 1))
         )
-        if tgt == "zh":
-            sys_prompt += "\n5. 使用简体中文。"
+        examples = IDIOM_EXAMPLES.get((src, tgt))
+        if examples:
+            sys_prompt += "\n口语/习语的译法示例：\n" + "\n".join(f"- {e}" for e in examples)
         if terms:
             sys_prompt += "\n术语表（必须遵守）：\n" + "\n".join(f"- {a} → {b}" for a, b in terms)
         if ctx:

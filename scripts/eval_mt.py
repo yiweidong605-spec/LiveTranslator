@@ -31,7 +31,7 @@ sys.path.insert(0, str(ROOT))
 import requests  # noqa: E402
 import yaml  # noqa: E402
 
-from app.translate import Translator  # noqa: E402
+from app.translate import PROMPT_VERSION, Translator  # noqa: E402
 
 EVAL_DIR = ROOT / "data" / "eval"
 DIRS = ["fr→zh", "zh→fr", "en→zh", "zh→en"]
@@ -268,7 +268,8 @@ def log_mlflow(summaries, rows, meta, out_dir, log):
             mlflow.set_tags({"run_group": meta["run"], "testset": meta["testset_hash"], "stage": "baseline",
                              "rescore_of": meta.get("rescore_of", ""), **run_tags()})
             mlflow.log_params({"model": s["model"], "style": s["style"], "n_items": s["n"],
-                               "glossary": meta["glossary"], "testset_file": meta["testset"]})
+                               "glossary": meta["glossary"], "testset_file": meta["testset"],
+                               "prompt_version": meta.get("prompt_version", PROMPT_VERSION)})
             mlflow.log_metrics({k: v for k, v in s.items() if isinstance(v, (int, float)) and v is not None
                                 and k not in ("n",)})
             mrows = [r for r in rows if r["model"] == s["model"]]
@@ -320,6 +321,7 @@ def main():
 
     meta = {"run": run, "testset": testset.name, "testset_hash": file_hash(testset),
             "n_items": len(items), "models": models, "glossary": not args.no_glossary,
+            "prompt_version": PROMPT_VERSION,
             "time": datetime.now().isoformat(timespec="seconds")}
 
     all_rows, done = [], []
@@ -348,7 +350,9 @@ def main():
                 done.append(r["model"])
         src_meta = json.loads((src.parent / "summary.json").read_text(encoding="utf-8"))["meta"]
         meta.update({"models": done, "rescore_of": args.rescore, "glossary": src_meta.get("glossary", True),
-                     "n_items": len(by_id)})
+                     "n_items": len(by_id),
+                     # a rescore keeps the translations, so it keeps their prompt version (old runs: v1)
+                     "prompt_version": src_meta.get("prompt_version", "v1")})
         log(f"重新打分：{args.rescore} 的 {len(done)} 个模型 × {len(by_id)} 句（评测集 {meta['testset_hash']}）")
     else:
         log(f"评测 {len(models)} 个模型 × {len(items)} 句  →  {out_dir}")
