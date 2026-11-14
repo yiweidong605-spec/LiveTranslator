@@ -1,141 +1,223 @@
-# 🌐 实时翻译助手 LiveTranslator
+# LiveTranslator
 
-**离线**的实时语音翻译：中文 ⇄ 法语 / 英语。所有模型都跑在你自己的电脑上，装好以后断网也能用。
+[![CI](https://github.com/yiweidong605-spec/LiveTranslator/actions/workflows/ci.yml/badge.svg)](https://github.com/yiweidong605-spec/LiveTranslator/actions/workflows/ci.yml)
 
-```
-麦克风 / 电脑声音 ──► 断句(Silero VAD) ──► 语音识别(Whisper) ──► 翻译(本地大模型) ──► 字幕 + 朗读(Piper)
-```
+**Offline, real-time speech translation between Chinese and French / English — plus the small ML
+platform around it that evaluates models, collects daily conversations as training data, and deploys
+itself.**
 
-| 环节 | 用的什么 | 说明 |
-|---|---|---|
-| 语音识别 | faster-whisper `large-v3-turbo`（没有显卡时用 `small`） | 法语、英语、中文识别都很准 |
-| 翻译 | Ollama + Qwen3 14B（评测第一；显存小时自动选 Qwen3 8B / Qwen2.5 7B / 3B），可换成腾讯混元翻译模型 HY-MT | 会参考上下文，能纠正识别错字，对面试官自动用 vous |
-| 朗读 | Piper 离线语音（法语 siwis / 英语 lessac） | 也可以改用 Windows 自带语音 |
-| 界面 | 本地网页 http://127.0.0.1:7860 | 双语卡片、大字幕模式、导出对话记录 |
+> 中文使用说明：[README.zh-CN.md](README.zh-CN.md)
+
+I am a Chinese student in France looking for an internship; many offers ask for C1 French. LiveTranslator
+runs entirely on my own GPU (no cloud, works without internet) and translates both sides of a
+conversation: face-to-face, video interviews (system audio), or typed text. Every translation carries a
+confidence card, every conversation lands in a WeChat-style review log, and my corrections become training
+pairs for later fine-tuning.
+
+The repository is also a deliberately complete, reproducible project: model selection backed by a test
+set and statistics, an Airflow + MLflow platform on a separate Linux node, CI/CD, backups and security
+checks — the parts that usually stay invisible in a demo.
 
 ---
 
-## 一、安装（只需一次，需要联网，大约 15–30 分钟）
+## Highlights
 
-1. 双击 **`setup.bat`**。它会自动：
-   - 用你的 miniconda 在本文件夹里建一个独立的 Python 环境（`env\`，不影响你原来的 `ml` 环境）
-   - 检测 NVIDIA 显卡，装 GPU 加速库
-   - 下载语音识别模型、法语/英语朗读语音
-   - 引导你安装 **Ollama**（运行本地大模型的免费软件），然后按显存下载推荐的翻译模型
-2. 看到「安装完成 🎉」就好了。
-
-> 一共大约要下载 7–9 GB（识别模型 2GB + 翻译模型 2–5GB + CUDA 库 1GB）。
-> **全部存在本文件夹里**（`env\` Python 环境、`models\` 模型、`ollama\` Ollama 程序、`.cache\` 下载缓存），不占 C 盘。以后要换位置：整个文件夹挪走后删掉里面的 `env` 文件夹，再运行一次 setup.bat（模型不用重新下载）。
-
-## 二、使用
-
-双击 **`run.bat`** → 浏览器会自动打开界面 → 等顶部状态变成绿色「✅ 就绪」→ 点「▶ 开始」。
-
-### 三种模式
-
-| 模式 | 适合场景 | 效果 |
-|---|---|---|
-| 🗣 **面对面对话** | 线下面试、问路、买东西、办手续 | 自动判断谁在说话：你说中文 → 显示法语并**读出来**；对方说法语 → 显示中文 |
-| 👂 **只听对方** | **视频面试**、听讲座、开会 | 只把对方的话翻成中文字幕，不出声 |
-| 🎤 **我说** | 只需要帮你说 | 只识别你的中文，翻成法语 |
-
-### 视频面试（Teams / Zoom / Google Meet）推荐用法
-
-1. 戴上**耳机**（否则对方的声音和你的声音会混在一起）。
-2. 模式选「👂 只听对方」，声音来源选「🔈 电脑声音」→ 对方说的话会实时变成中文字幕。
-3. 点「大字幕」，把浏览器窗口缩小放在会议窗口旁边。
-4. 轮到你回答时：在下面输入框打中文（或另开一个标签页用「我说」模式），**看着蓝色卡片上的法语自己读出来**——自己读比机器朗读自然得多，面试官也更容易接受。
-
-> 进阶：如果想让对方直接听到机器朗读，可以装免费的虚拟声卡 **VB-Cable**，在界面「朗读到」下拉框里选 CABLE Input，再在 Teams/Zoom 里把麦克风选成「CABLE Output」。
-
-### 小技巧
-
-- **快捷打字翻译**：底部输入框输入中文回车 → 翻成法语并朗读；输入法语 → 翻成中文。
-- **🔊** 按钮：重新朗读某句；**⧉**：复制译文。
-- **导出记录**：面试后下载完整双语记录，用来复盘、学表达。
-- **术语表**：编辑 `glossary.txt`，按「中文 = 法语 = 英语」一行一个，加入你专业的词（如 `供应链 = chaîne d'approvisionnement = supply chain`），翻译会严格使用。
-- **翻译太慢**：把 `config.yaml` 里 `vad.min_silence_ms` 从 600 改成 400（说完更快出结果）；或换小一点的模型 `qwen2.5:3b`。
-- **环境太吵误触发**：`vad.threshold` 调到 0.6–0.7。
-
-## 三、每句话的置信度 & 复盘
-
-### 置信度（属性卡）
-每句翻译右上角有一个百分比徽章（绿 ≥80% / 黄 60–80% / 红 <60%），点开就是这句话的**属性卡**：
-
-- **整句置信度 = 听对的把握 × 翻对的把握**
-  - 听对：Whisper 给每个词的概率。听不清的词会在原文下面画橙色虚线
-  - 翻对：大模型生成每个词时的概率。遇到歧义词（如 *avocat* = 牛油果 / 律师），模型会在几个译法之间犹豫，概率就低，属性卡里会列出它在犹豫哪些词、备选是什么
-- 有上下文时模型更有把握，所以同一句话的置信度会更高
-- 时间、来源、用的模型、耗时、参考了几句上文、原声回放
-
-> 置信度公式目前用的是经验值；跑完评测后，报告里的「置信可信度」会告诉我们它准不准，到时再校准。
-
-### 复盘（像微信聊天记录）
-主界面右上角 **📒 复盘**，或打开 http://127.0.0.1:7860/history
-
-- 左边按天列出对话，标出每天有几句「拿不准」
-- 右边像微信一样显示气泡：对方在左、你在右，大字是译文、小字是原文
-- 点任意一句 → 属性卡：可以**听原声**、写下**正确译文**、加**备注**（比如“这是 Paul 的口头禅”）、**标星**
-- 「只看拿不准的」快速找出需要复盘的句子；顶部可以搜索
-
-所有记录都在本地 `data\logs\`：每天一个 `.jsonl` 文件，原声在 `audio\`，你的修改在 `edits.jsonl`（不会改动原始记录）。之后建知识库、做训练都从这里取数据。
-
-## 四、模型评测与选型
-
-双击 **`eval.bat`**，按菜单操作：
-
-| 菜单 | 做什么 |
+| | |
 |---|---|
-| 1 | 安装评测工具，下载候选模型（只需一次；8 个模型共约 55GB，可以只选几个） |
-| 2 | 用全部 247 句评测所有候选模型（每个模型约 5–10 分钟） |
-| 3 | 快速试跑（前 40 句） |
-| 4 | 评测 + COMET 神经网络打分（更接近人工判断，需要在菜单 1 里装 COMET） |
-| 5 | 语音识别评测（用合成语音做基线 + 你自己的录音） |
-| 6 | 打开 MLflow 看板，对比历次评测 |
+| **Real time, offline** | ~0.25 s speech recognition + ~0.5 s translation per sentence on an RTX 4060 Ti 16 GB |
+| **Chosen by data** | 8 local LLMs evaluated on a 246-sentence zh⇄fr/en test set with paired bootstrap significance; prompt changes are A/B-tested with fixed seeds |
+| **Per-sentence confidence** | ASR word probabilities × LLM token log-probabilities, shown as an attribute card (and honestly measured: it is not calibrated yet) |
+| **Learning loop** | Review page → corrections / stars → Airflow builds a Parquet dataset, daily quality metrics and a training-pair set |
+| **Platform** | PostgreSQL · RustFS (S3) · MLflow · Airflow 3 on an Ubuntu mini PC, reachable only over Tailscale |
+| **Operations** | GitHub Actions CI (31 tests, lint, secret scan, DAG integrity) → pull-based CD with automatic rollback · restic 3-2-1 backups · read-only security audit |
 
-**评测集** `data\eval\mt_testset.jsonl`（247 句，**参考译文是草稿，最好请法国同学帮忙校对**）：
+## Architecture
 
-| 类别 | 句数 | 测什么 |
+```mermaid
+flowchart LR
+  subgraph Desktop["Windows desktop · RTX 4060 Ti 16 GB"]
+    direction TB
+    mic["Mic / system audio"] --> vad["Silero VAD"] --> asr["faster-whisper large-v3-turbo"] --> mt["Ollama · qwen3:14b"]
+    mt --> tts["Piper TTS"]
+    mt --> ui["FastAPI + WebSocket UI<br/>confidence cards"]
+    ui --> log[("Logbook<br/>jsonl + audio + edits")]
+    review["Review page<br/>correct · star · ignore"] --> log
+    eval["eval.bat<br/>model / prompt A/B"]
+    copies[("Backup copies<br/>2nd disk + USB")]
+  end
+
+  subgraph Node["Ubuntu mini PC · Docker Compose · Tailscale only"]
+    direction TB
+    s3[("RustFS S3<br/>bronze: raw logbook")] --> af["Airflow 3<br/>logbook_daily"]
+    af --> ds[("silver: Parquet<br/>gold: training pairs")]
+    af --> ml["MLflow<br/>Postgres + S3"]
+    bk["restic backups<br/>systemd timer"]
+    dep["deploy.sh<br/>every 5 min"]
+  end
+
+  gh["GitHub Actions CI"]
+
+  log -- "sync.bat · write-only key<br/>+ asset event" --> s3
+  eval -- "runs, metrics" --> ml
+  bk -- "read-only SFTP pull" --> copies
+  gh -- "green → branch deploy" --> dep
+```
+
+The real-time app never depends on the platform: if the mini PC is off, translation keeps working and
+evaluation results fall back to a local MLflow database.
+
+## The real-time pipeline
+
+| Stage | Component | Notes |
 |---|---|---|
-| 面试 | 60 | 中法双向的面试问答 |
-| 职场 / 生活办事 / 街头 | 30 / 40 / 24 | 同事对话、警察局/银行/医生/房东、问路点餐 |
-| 俚语 / 梗 | 20 | *chelou*、*poser un lapin*、“卷”、“摸鱼” |
-| 识别噪声 | 16 | 带口头禅、重复词和同音错字的句子（“简力”=简历） |
-| 歧义 | 27 | 同一句话：没有上下文 vs 不同上下文，检查能不能靠上下文翻对、置信度会不会变化 |
-| 英语 | 30 | 中英双向面试 |
+| Segmentation | Silero VAD v6 (streaming, 512-sample frames) | sentence ends after 600 ms of silence; mic muted while TTS speaks |
+| Recognition | faster-whisper `large-v3-turbo` on CUDA | word timestamps + probabilities, hotwords for names |
+| Translation | Ollama, `qwen3:14b` | streaming, `think: false`, last 4 turns as context, glossary enforced, *vous* with interviewers |
+| Speech | Piper (`fr_FR-siwis`, `en_US-lessac`) | optional; output to any device (e.g. a virtual cable for video calls) |
+| Logbook | jsonl per day + audio per sentence | edits are stored separately, the original record is never modified |
 
-加句子很简单：照着文件里的格式加一行 JSON。`expect` 填关键译法（翻译里出现其中任意一个就算对），`context` 填上文。
+## Model selection
 
-**评测报告**（跑完自动打开）：排行榜、各方向/各场景得分、逐句对比（可以筛选「模型分歧最大」「关键词翻错」的句子）。
+`eval.bat` → `scripts/eval_mt.py`: chrF/BLEU (sacreBLEU), keyword checks for terms that must be right,
+ambiguity sentences with and without context, confidence-vs-quality correlation, 95 % bootstrap
+confidence intervals and P(first is better). Runs are logged to MLflow with the test-set hash.
 
-**识别评测用自己的录音**：把录音放进 `data\eval\asr\real\`，文件名用语言开头，比如 `fr_面试问题1.wav`，旁边放同名 `.txt` 写正确文本。
+Test set v1.1: 246 sentences — interviews, work, daily errands, street talk, slang, ASR noise, ambiguity,
+English. Results (2026-11-06, glossary on):
 
-### 换模型
-评测完挑出最好的模型，把 `config.yaml` 里 `translator.model` 改成它的名字即可。候选列表在 `config.yaml` 的 `eval.candidates` 里，可以随意增删。
+| Model | chrF | 95 % CI | Keywords | Ambiguity w/ context | fr→zh | zh→fr | Latency (avg / p90) |
+|---|---|---|---|---|---|---|---|
+| **qwen3:14b** | **51.8** | 48.3–55.2 | **92 %** | **100 %** | **45.9** | 62.8 | 0.47 / 0.76 s |
+| qwen2.5:14b | 50.9 | 47.4–54.5 | 91 % | 94 % | 42.1 | 59.1 | 0.52 / 0.77 s |
+| gemma3:12b | 50.0 | 46.4–53.5 | 91 % | 81 % | 36.7 | **65.6** | 0.54 / 0.79 s |
+| qwen3:8b | 48.0 | 44.6–51.6 | 85 % | 94 % | 40.1 | 58.6 | 0.28 / 0.43 s |
+| qwen2.5:7b (first default) | 44.2 | 41.0–47.5 | 79 % | 94 % | 34.0 | 54.9 | 0.26 / 0.44 s |
+| HY-MT1.5-7B (translation-specific) | 43.4 | 40.4–46.6 | 72 % | 75 % | 35.2 | 54.6 | 0.31 / 0.46 s |
 
-## 五、常见问题
+Findings: the top three are not statistically separable overall, but per direction they are —
+qwen3:14b is clearly better at understanding French (fr→zh, the critical path in an interview) and
+gemma3:12b writes more natural French. Translation-specific models did **not** beat general LLMs on
+spoken language. Full write-up and the other two models are in the run report.
 
-- **状态栏一直红色/提示连不上 Ollama**：右下角托盘里打开 Ollama，再重启 run.bat。
-- **识别显示 cpu 而不是 cuda**：重新运行 setup.bat（会重装 CUDA 库）；或更新显卡驱动。CPU 模式也能用，只是慢一些。
-- **选「电脑声音」没反应**：确认会议软件的声音是从**默认**扬声器/耳机播出的（Windows 声音设置里的默认输出设备）。
-- **法语朗读没声音**：检查 `models\piper\` 里有没有 `fr_FR-siwis-medium.onnx`，没有就重新运行 setup.bat。
-- **置信度一直显示 ?**：说明 Ollama 版本太旧，不支持返回词概率。到 ollama.com 下载新版覆盖安装即可。
-- **MLflow 打开后是 GenAI 页面**：左上角切到「Model training」。
+### Prompt A/B test (2026-11-14)
 
-## 文件结构
+A prompt that tells the model to translate slang by meaning (v2) looked better on one run. With
+fixed seeds (42, 7) and both prompts on the same model:
+
+| Metric | v1 | v2 | Δ | Seed-to-seed spread | Verdict |
+|---|---|---|---|---|---|
+| chrF overall | 51.1 | 51.4 | +0.2 | 0.7 | noise |
+| Street talk | 43.8 | 47.8 | +4.0 | 2.2 | better |
+| Slang | 29.1 | 30.9 | +1.8 | 3.7 | noise |
+| Ambiguity (chrF) | 53.8 | 48.6 | −5.2 | 2.8 | **worse** |
+| Keywords | 89.5 % | 86.0 % | −3.5 | 0.0 | **worse** |
+
+v2 invented a dish ("un avocat" at a restaurant → *escargots*) in both seeds: "use the equivalent
+expression" was read as permission to substitute. **v1 stays in production**; v2 is kept for comparison.
+A unit test also guarantees that no prompt example appears in the test set — it caught exactly that in
+the first draft.
+
+## Confidence per sentence
+
+`overall = ASR confidence × MT confidence`, each a blend of geometric-mean and minimum token
+probability. The card shows weak words, the model's alternatives, latency, context used and the audio.
+Measured against quality it is **weak** (Spearman 0.15–0.50, and it can say 100 % on a literal
+mistranslation), so the plan is glass-box quality estimation features (Fomicheva et al., 2020),
+semantic entropy (Farquhar et al., 2024), CometKiwi, then calibration with AUROC/ECE.
+
+## Learning loop: from conversations to training data
+
+`sync.bat` (runs only when started, no background process) uploads new/changed logbook files with an
+MD5 check, then emits an Airflow **asset event**. `logbook_daily` (also scheduled daily as a safety net):
+
+- finds changed dates by fingerprint (raw file ETag + that day's edits + pipeline version);
+- **bronze → silver**: validates every line (bad lines go to quarantine, not to the floor), de-duplicates,
+  merges edits (latest wins, undo supported), writes typed Parquet with a fixed schema;
+- **gold**: daily metrics to MLflow (utterances, confidence, low-confidence rate, corrections, latency),
+  the 10 sentences most worth reviewing, and training pairs (corrections + starred translations, ignored
+  ones excluded);
+- dynamic task mapping per date; idempotent; a failed date is retried next run while the others commit.
+
+## Platform
+
+| Service | Role | Exposure |
+|---|---|---|
+| PostgreSQL 17 | metadata for MLflow and Airflow | localhost only |
+| RustFS | S3-compatible object store (MinIO community edition was archived in 2026) | localhost → Tailscale |
+| MLflow ≥ 3.15 | experiments, artifacts proxied to S3 | localhost → Tailscale |
+| Airflow 3.4 | LocalExecutor; api-server, scheduler, dag-processor, triggerer | localhost → Tailscale |
+
+Design choices worth noting:
+
+- Docker-published ports bypass `ufw`, so every port binds to 127.0.0.1 and `tailscale serve` exposes it
+  to my devices only.
+- **Least privilege everywhere**: the desktop's S3 key can only *write* under `lt-logs/raw/` (not read,
+  list or delete); its Airflow account can only create asset events; the backup account is read-only
+  SFTP with no shell; the deploy key is read-only for this one repository.
+- Secrets are generated on the node (`gen-env.sh`), never committed (gitleaks runs in CI).
+
+## Operations
+
+- **CI** (`.github/workflows/ci.yml`): ruff, shellcheck, `docker compose config`, gitleaks over the full
+  history, 25 unit tests, and a DAG-integrity job that imports every DAG with Airflow 3.4.0.
+- **CD, pull-based**: a green build moves branch `deploy`; the node polls it every 5 minutes, restarts
+  only what changed, **rolls back** if the stack fails to start, never retries a known-bad commit and
+  refuses to deploy over manual edits on the server. GitHub holds no credentials for the node.
+- **Backups (3-2-1)**: daily `pg_dump` + S3 mirror + config into restic (7 daily / 4 weekly / 12 monthly,
+  weekly integrity check); the desktop pulls copies to a second physical disk and to an offline USB drive.
+  Run by systemd, *not* by Airflow — a backup must not depend on what it backs up.
+- **Monitoring**: hourly `platform_healthcheck` (storage round trip, MLflow, internet via four
+  independent probes, disk, backup age), results in MLflow tagged with the deployed commit.
+- **Security audit**: `infra/platform/security-audit.sh` — read-only incident-response checklist (logins,
+  accounts, keys, tailnet devices, listeners, persistence, suspicious processes, package integrity).
+
+## Engineering notes
+
+Short write-ups of problems that taught something:
+
+- **"The mini PC keeps losing internet"** — it didn't. The health check probed one site (neverssl.com, a
+  single AWS host) that answered only ~30 % of connections from my network. Ruled out the link (0 % ping
+  loss), Docker/ufw (host and containers failed randomly alike) and port 80 (same IP fine over http and
+  https) before finding it. Fix: four independent probes, healthy if any succeeds, failures classified as
+  portal / DNS / timeout / no route.
+- **A misleading error**: `Network is unreachable` was the IPv6 fallback's error; the real failure was a
+  10-second IPv4 timeout. Probes now force IPv4 on a network that has no IPv6.
+- **`ssh -T git@github.com` always exits 1**, so under `set -o pipefail` a successful authentication
+  check looked like a failure.
+- **Sampling noise**: a single evaluation run reported 100 % on ambiguity; with fixed seeds v1 scores
+  94 %. Comparisons now use seeds and report the seed-to-seed spread.
+
+## Repository layout
 
 ```
-translater/
-├─ setup.bat / run.bat / eval.bat   安装 / 启动 / 评测
-├─ config.yaml                      所有设置（含评测候选模型）
-├─ glossary.txt                     术语表
-├─ app/                             程序（asr 识别 · translate 翻译 · confidence 置信度 · logbook 记账本
-│                                         · tts 朗读 · vad 断句 · engine 调度 · server 界面 · static 网页）
-├─ scripts/                         安装向导、评测脚本（eval_mt / eval_asr）、报告模板
-├─ data/
-│   ├─ logs/                        每天的对话记录 + 原声 + 你的修改
-│   └─ eval/                        评测集、每次评测的结果和报告、leaderboard.csv
-├─ models/                          所有模型（whisper / piper / ollama）
-├─ mlflow.db, mlruns/               MLflow 实验记录
-└─ env/  ollama/  .cache/           Python 环境、Ollama 程序、下载缓存
+app/                 real-time app: VAD, ASR, translation, confidence, logbook, FastAPI server, web UI
+scripts/             evaluation (eval_mt, eval_asr), MLflow wiring, sync_logs, backup_pull, setup wizard
+data/eval/           test set (jsonl) + changelog
+tests/               pytest: logbook transform, probes, sync, prompts, DAG integrity
+infra/platform/      docker-compose, Dockerfiles, Airflow DAGs (+ lt_lib), backup, deploy, security audit
+*.bat                Windows entry points: setup, run, eval, sync, package
 ```
+
+## Getting started
+
+**Desktop (Windows, NVIDIA GPU recommended)** — double-click `setup.bat` (creates a local Python env,
+installs CUDA libraries, downloads Whisper and Piper voices, installs Ollama and the recommended model
+for your VRAM), then `run.bat`. The UI opens at http://127.0.0.1:7860. Everything stays inside the project
+folder.
+
+**Platform (optional, Ubuntu + Docker)** — see [infra/platform/README.md](infra/platform/README.md):
+`./gen-env.sh`, `docker compose up -d`, `./tailscale-serve.sh`, then the backup and deploy installers.
+
+**Tests** — `pip install -r requirements-ci.txt && pytest -m "not airflow"`; the DAG tests additionally
+need `apache-airflow==3.4.0`.
+
+## Roadmap
+
+- [x] Phase 0 — prototype: offline speech-to-speech translation, confidence cards, review log
+- [x] Phase 1 — model selection by evaluation (native-speaker review of the test set, COMET and
+      confidence calibration still to do)
+- [x] Phase 3 — platform: Airflow, MLflow, data pipeline, CI/CD, backups
+- [ ] Phase 2 — packaging: `src/` layout, pyproject packaging, more tests
+- [ ] Phase 4 — memory: people, catchphrases and running jokes from past conversations as context
+- [ ] Phase 5 — fine-tuning on accumulated training pairs (LoRA), nightly evaluation on the GPU node
+- [ ] Phase 6 — phone / street mode

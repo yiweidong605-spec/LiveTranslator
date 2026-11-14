@@ -31,7 +31,7 @@ sys.path.insert(0, str(ROOT))
 import requests  # noqa: E402
 import yaml  # noqa: E402
 
-from app.translate import PROMPT_VERSION, Translator  # noqa: E402
+from app.translate import PROMPT_VERSION, PROMPT_VERSIONS, Translator  # noqa: E402
 
 EVAL_DIR = ROOT / "data" / "eval"
 DIRS = ["fr→zh", "zh→fr", "en→zh", "zh→en"]
@@ -97,10 +97,15 @@ def ollama_unload(url: str, model: str):
 
 
 # ----------------------------------------------------------------------------- 评测一个模型
-def run_model(model: str, items: list[dict], tcfg: dict, log) -> list[dict]:
+def run_model(model: str, items: list[dict], tcfg: dict, log, prompt: str | None = None,
+              seed: int | None = None, label: str | None = None) -> list[dict]:
+    """label names this variant in the results (model alone, or model + prompt + seed in an A/B test)."""
     cfg = dict(tcfg)
     cfg["model"] = model
     cfg["style"] = "auto"
+    cfg["prompt_version"] = prompt or PROMPT_VERSION
+    cfg["seed"] = seed
+    label = label or model
     tr = Translator(cfg, log=lambda *a: None)
     ok, msg = tr.check()
     if not ok:
@@ -111,7 +116,8 @@ def run_model(model: str, items: list[dict], tcfg: dict, log) -> list[dict]:
     t_start = time.time()
     for n, it in enumerate(items, 1):
         ctx = [(c["src"], c["tgt"]) for c in it.get("context", [])]
-        row = {"model": model, "style": tr.style, "id": it["id"], "cat": it["cat"],
+        row = {"model": label, "base_model": model, "prompt_version": cfg["prompt_version"], "seed": seed,
+               "style": tr.style, "id": it["id"], "cat": it["cat"],
                "dir": f"{it['src_lang']}→{it['tgt_lang']}", "src": it["src"], "ref": it["ref"],
                "with_context": it.get("with_context"), "group": it.get("group")}
         try:
@@ -125,7 +131,7 @@ def run_model(model: str, items: list[dict], tcfg: dict, log) -> list[dict]:
         rows.append(row)
         if n % 20 == 0 or n == len(items):
             el = time.time() - t_start
-            log(f"  {model}: {n}/{len(items)}  已用 {el:.0f}s，预计还要 {el / n * (len(items) - n):.0f}s")
+            log(f"  {label}: {n}/{len(items)}  已用 {el:.0f}s，预计还要 {el / n * (len(items) - n):.0f}s")
     return rows
 
 
@@ -178,6 +184,9 @@ def comet_score(all_rows: list[dict], log):
 
 def summarize(model: str, rows: list[dict]) -> dict:
     s = {"model": model, "style": rows[0]["style"] if rows else "", "n": len(rows)}
+    for k in ("base_model", "prompt_version", "seed"):  # which variant this is (A/B tests)
+        if rows and rows[0].get(k) is not None:
+            s[k] = rows[0][k]
     s.update(corpus_scores(rows))
     main = [r for r in rows if r.get("with_context") is not False]
     s["chrf_avg"] = mean([r["chrf"] for r in main])
@@ -267,9 +276,11 @@ def log_mlflow(summaries, rows, meta, out_dir, log):
         with mlflow.start_run(run_name=s["model"]):
             mlflow.set_tags({"run_group": meta["run"], "testset": meta["testset_hash"], "stage": "baseline",
                              "rescore_of": meta.get("rescore_of", ""), **run_tags()})
-            mlflow.log_params({"model": s["model"], "style": s["style"], "n_items": s["n"],
+            mlflow.log_params({"model": s.get("base_model", s["model"]), "variant": s["model"],
+                               "style": s["style"], "n_items": s["n"],
                                "glossary": meta["glossary"], "testset_file": meta["testset"],
-                               "prompt_version": meta.get("prompt_version", PROMPT_VERSION)})
+                               "prompt_version": s.get("prompt_version", meta.get("prompt_version", PROMPT_VERSION)),
+                               "seed": s.get("seed", "none")})
             mlflow.log_metrics({k: v for k, v in s.items() if isinstance(v, (int, float)) and v is not None
                                 and k not in ("n",)})
             mrows = [r for r in rows if r["model"] == s["model"]]
@@ -279,16 +290,87 @@ def log_mlflow(summaries, rows, meta, out_dir, log):
     log(f"✓ 已记录到 MLflow（{where}；eval.bat 菜单 6 打开看板）")
 
 
+# ----------------------------------------------------------------------------- A/B
+AB_METRICS = [("chrf_avg", "整体 chrF", 1), ("keyword_acc", "关键词", 3), ("ambiguity_ctx_acc", "歧义(有上下文)", 3),
+              ("chrf_cat_slang", "俚语类", 1), ("chrf_cat_street", "街头类", 1),
+              ("chrf_cat_ambiguity", "歧义类 chrF", 1), ("chrf_cat_interview", "面试类", 1)]
+
+
+def ab_report(summaries: list[dict], rows: list[dict], log, out_dir: Path, n_boot: int = 2000):
+    """Compare prompt versions: mean over seeds, seed-to-seed spread (= noise), paired bootstrap on chrF,
+    and the sentences whose keyword verdict changed in EVERY seed (= caused by the prompt, not by luck)."""
+    import random
+    import statistics
+
+    by_p: dict[str, list[dict]] = {}
+    for s in summaries:
+        by_p.setdefault(s["prompt_version"], []).append(s)
+    versions = sorted(by_p)
+    base, new = versions[0], versions[-1]
+    log(f"\n===== A/B：提示词 {base} vs {new}（每个版本 {len(by_p[base])} 个种子）=====")
+    log(f"{'指标':16s} {base:>10s} {new:>10s} {'差值':>8s} {'种子间波动':>10s}  结论")
+    report = {"base": base, "new": new, "metrics": {}}
+    for key, name, prec in AB_METRICS:
+        vals = {v: [x[key] for x in by_p[v] if x.get(key) is not None] for v in versions}
+        if not vals[base] or not vals[new]:
+            continue
+        mb, mn = statistics.fmean(vals[base]), statistics.fmean(vals[new])
+        spread = max((max(v) - min(v)) for v in vals.values() if len(v) > 1) if any(len(v) > 1 for v in vals.values()) else 0
+        diff = mn - mb
+        verdict = "在波动范围内" if abs(diff) <= spread else ("变好" if diff > 0 else "变差")
+        log(f"{name:16s} {mb:>10.{prec}f} {mn:>10.{prec}f} {diff:>+8.{prec}f} {spread:>10.{prec}f}  {verdict}")
+        report["metrics"][key] = {"base": mb, "new": mn, "diff": diff, "seed_spread": spread, "verdict": verdict}
+
+    # paired bootstrap over sentences, each sentence's chrF averaged over seeds
+    def per_item(v):
+        acc: dict[str, list[float]] = {}
+        for r in rows:
+            if r.get("prompt_version") == v and r.get("with_context") is not False:
+                acc.setdefault(r["id"], []).append(r["chrf"])
+        return {k: statistics.fmean(x) for k, x in acc.items()}
+    a, b = per_item(base), per_item(new)
+    ids = sorted(set(a) & set(b))
+    rng = random.Random(0)
+    wins = 0
+    for _ in range(n_boot):
+        sample = [rng.choice(ids) for _ in ids]
+        wins += sum(b[i] - a[i] for i in sample) > 0
+    p_better = wins / n_boot
+    log(f"\n配对 bootstrap（{len(ids)} 句，chrF 按种子取平均）：P({new} 比 {base} 好) = {p_better:.0%}"
+        f"  {'→ 有把握' if p_better >= 0.95 or p_better <= 0.05 else '→ 还分不出高下'}")
+    report["p_new_better_chrf"] = p_better
+
+    # sentences whose keyword verdict flipped the same way under every seed
+    hits: dict[tuple[str, str], list] = {}
+    for r in rows:
+        if r.get("hit") is not None:
+            hits.setdefault((r["id"], r["prompt_version"]), []).append(r["hit"])
+    srcs = {r["id"]: r for r in rows if r.get("prompt_version") == new}
+    lost = [i for (i, v), h in hits.items() if v == base and all(h) and not any(hits.get((i, new), [1]))]
+    won = [i for (i, v), h in hits.items() if v == base and not any(h) and all(hits.get((i, new), [0]))]
+    report.update({"consistently_lost": lost, "consistently_won": won})
+    log(f"每个种子都一致的关键词变化：{new} 修好 {len(won)} 句，弄坏 {len(lost)} 句")
+    for tag, lst in (("+", won), ("-", lost)):
+        for i in lst:
+            log(f"  {tag} {i}: {srcs[i]['src'][:50]}  →  {srcs[i]['hyp'][:60]}")
+    (out_dir / "ab.json").write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 # ----------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description="翻译模型评测")
-    ap.add_argument("--models", help="逗号分隔；默认用 config.yaml 的 eval.candidates")
+    ap.add_argument("--models", help="逗号分隔；默认用 config.yaml 的 eval.candidates；production = 当前在用的模型")
     ap.add_argument("--testset", default=str(EVAL_DIR / "mt_testset.jsonl"))
     ap.add_argument("--limit", type=int, default=0, help="只跑前 N 句（快速试跑）")
     ap.add_argument("--cats", help="只跑某些类别，逗号分隔，如 interview,slang")
     ap.add_argument("--comet", action="store_true", help="用 COMET 打分（更接近人工判断，需要先安装）")
     ap.add_argument("--no-glossary", action="store_true", help="不使用术语表")
     ap.add_argument("--no-mlflow", action="store_true")
+    ap.add_argument("--prompts", default=PROMPT_VERSION,
+                    help=f"提示词版本，逗号分隔，用于 A/B 测试；可选 {','.join(PROMPT_VERSIONS)}")
+    ap.add_argument("--seeds", default="42",
+                    help="随机种子，逗号分隔。固定种子 → 同样的输入得到同样的译文，两次评测的差别只来自被测试的改动；"
+                         "多个种子 → 看结论是否稳定。none = 不固定")
     ap.add_argument("--rescore", metavar="RUN",
                     help="不重新翻译，用已保存的译文按当前评测集重新打分，例如 --rescore 20261106-135255")
     args = ap.parse_args()
@@ -297,6 +379,8 @@ def main():
     tcfg = dict(cfg.get("translator", {}))
     if args.no_glossary:
         tcfg["glossary_file"] = "__no_glossary__.txt"
+    if args.models == "production":  # the model the app uses (config.yaml → translator.model)
+        args.models = cfg.get("translator", {}).get("model", "")
     models = [m.strip() for m in (args.models.split(",") if args.models else cfg.get("eval", {}).get("candidates", [])) if m.strip()]
     if not models and not args.rescore:
         sys.exit("没有要评测的模型：用 --models 指定，或在 config.yaml 的 eval.candidates 里填写")
@@ -319,9 +403,14 @@ def main():
         logf.write(msg + "\n")
         logf.flush()
 
+    prompts = [p.strip() for p in args.prompts.split(",") if p.strip()]
+    bad = [p for p in prompts if p not in PROMPT_VERSIONS]
+    if bad:
+        sys.exit(f"未知的提示词版本 {bad}，可选：{PROMPT_VERSIONS}")
+    seeds = [None if s.strip() == "none" else int(s) for s in args.seeds.split(",") if s.strip()]
     meta = {"run": run, "testset": testset.name, "testset_hash": file_hash(testset),
             "n_items": len(items), "models": models, "glossary": not args.no_glossary,
-            "prompt_version": PROMPT_VERSION,
+            "prompt_version": ",".join(prompts), "seeds": args.seeds,
             "time": datetime.now().isoformat(timespec="seconds")}
 
     all_rows, done = [], []
@@ -355,19 +444,24 @@ def main():
                      "prompt_version": src_meta.get("prompt_version", "v1")})
         log(f"重新打分：{args.rescore} 的 {len(done)} 个模型 × {len(by_id)} 句（评测集 {meta['testset_hash']}）")
     else:
-        log(f"评测 {len(models)} 个模型 × {len(items)} 句  →  {out_dir}")
+        variants = [(m, p, s) for m in models for p in prompts for s in seeds]
+        ab = len(prompts) > 1 or len(seeds) > 1
+        log(f"评测 {len(variants)} 组（{len(models)} 个模型 × {len(prompts)} 个提示词 × {len(seeds)} 个种子）"
+            f" × {len(items)} 句  →  {out_dir}")
         url = tcfg.get("ollama_url", "http://127.0.0.1:11434")
-        for i, m in enumerate(models, 1):
-            log(f"\n[{i}/{len(models)}] {m}")
+        for i, (m, p, s) in enumerate(variants, 1):
+            label = f"{m} [{p}, seed {s}]" if ab else m
+            log(f"\n[{i}/{len(variants)}] {label}")
             try:
-                rows = run_model(m, items, tcfg, log)
+                rows = run_model(m, items, tcfg, log, prompt=p, seed=s, label=label)
                 all_rows += rows
-                done.append(m)
+                done.append(label)
             except Exception as e:
-                log(f"  ✗ 跳过 {m}：{e}")
+                log(f"  ✗ 跳过 {label}：{e}")
                 if not isinstance(e, RuntimeError):
                     traceback.print_exc()
-            ollama_unload(url, m)  # 释放显存给下一个模型
+            if i == len(variants) or variants[i][0] != m:
+                ollama_unload(url, m)  # 换模型前释放显存
 
     if not all_rows:
         sys.exit("没有任何模型跑成功。")
@@ -398,6 +492,8 @@ def main():
         log(f"{s['model'][:42]:42s} {f(s.get('chrf_avg')):>6s} {f(s.get('comet_avg'), 3):>6s} "
             f"{f(s.get('keyword_acc'), 2):>6s} {f(s.get('ambiguity_ctx_acc'), 2):>6s} "
             f"{f(s.get('conf_vs_chrf'), 2):>8s} {f(s.get('latency_s'), 2):>5s}s")
+    if len({x.get("prompt_version") for x in summaries}) > 1:
+        ab_report(summaries, all_rows, log, out_dir)
     log(f"\n报告：{out_dir / 'report.html'}")
     try:
         import webbrowser

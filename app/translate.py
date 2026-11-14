@@ -31,15 +31,22 @@ LANG_EN = {"zh": "Chinese", "fr": "French", "en": "English"}
 #   v2  2026-11-14  slang / idioms are translated by meaning (literal "这很严重！我此刻正在水下" for
 #                   "C'est grave bien ! Je suis sous l'eau"). The examples below are deliberately NOT
 #                   taken from the test set, otherwise the evaluation would measure memorisation.
-PROMPT_VERSION = "v2"
+#   A/B 2026-11-14 (qwen3:14b, seeds 42+7, eval.bat option 9): v2 gave no overall gain (chrF +0.2 < seed
+#   noise 0.7), +4.0 on street talk, but consistently worse on context/ambiguity (−5.2 chrF; e.g. "avocat"
+#   at a restaurant became "法式焗蜗牛" — "the equivalent expression" read as licence to substitute).
+#   → production stays on v1; v2 is kept for comparison until a better v3 exists.
+PROMPT_VERSION = "v1"
+PROMPT_VERSIONS = ("v1", "v2")  # older versions stay available for A/B tests (eval_mt.py --prompts v1,v2)
 
+# (tests/test_prompts.py fails if one of these ever overlaps with a test sentence — it caught
+#  "Il m'a posé un lapin", which is test item slang-frzh-05, in the first draft)
 IDIOM_EXAMPLES = {
-    ("fr", "zh"): ["Ça déchire ! → 太酷了！", "Il m'a posé un lapin. → 他放我鸽子了。",
+    ("fr", "zh"): ["Ça déchire ! → 太酷了！", "J'ai le cafard. → 我心情很低落。",
                    "J'ai la pêche aujourd'hui. → 我今天精神特别好。"],
     ("zh", "fr"): ["加油！ → Bon courage !", "随便，你定吧。 → Comme tu veux, c'est toi qui choisis.",
-                   "他放我鸽子了。 → Il m'a posé un lapin."],
+                   "这个考试小菜一碟。 → Cet examen, c'est les doigts dans le nez."],
     ("en", "zh"): ["Break a leg! → 祝你好运！", "I'm swamped. → 我忙得不可开交。"],
-    ("zh", "en"): ["加油！ → You've got this!", "他放我鸽子了。 → He stood me up."],
+    ("zh", "en"): ["加油！ → You've got this!", "小菜一碟。 → It's a piece of cake."],
 }
 
 
@@ -110,6 +117,12 @@ class Translator:
         self.url = cfg.get("ollama_url", "http://127.0.0.1:11434").rstrip("/")
         self.scenario = cfg.get("scenario", "在法国求职、实习面试和日常交流")
         self.context_turns = int(cfg.get("context_turns", 4))
+        self.prompt_version = cfg.get("prompt_version") or PROMPT_VERSION
+        if self.prompt_version not in PROMPT_VERSIONS:
+            raise ValueError(f"unknown prompt_version {self.prompt_version!r}, known: {PROMPT_VERSIONS}")
+        # fixed sampling seed: same input → same output. Used by evaluations so that two runs differ only
+        # by what is being tested; the live app leaves it unset.
+        self.seed = cfg.get("seed")
         self.glossary = load_glossary(ROOT / cfg.get("glossary_file", "glossary.txt"))
         self.history: list[tuple[str, str]] = []  # (原文, 译文)
         self.lock = threading.Lock()
@@ -190,6 +203,8 @@ class Translator:
             return [{"role": "user", "content": "\n".join(parts)}]
 
         # 通用对话模型
+        if getattr(self, "prompt_version", PROMPT_VERSION) == "v1":
+            return self._messages_v1(text, src, tgt, terms, ctx)
         rules = [
             "只输出译文本身，不要解释、不要加引号、不要回答问题、不要加拼音或注释。",
             "原文来自语音识别，可能有错字、断句不全或口头禅，请根据上下文理解后翻译成通顺的话，口头禅可省略。",
@@ -222,6 +237,35 @@ class Translator:
             {"role": "user", "content": text},
         ]
 
+    def _messages_v1(self, text, src, tgt, terms, ctx) -> list[dict]:
+        """The 2026-11-01 prompt, kept verbatim so A/B tests compare against exactly what ran before."""
+        polite = ""
+        if tgt == "fr":
+            polite = "对面试官/陌生人用 vous，用词得体自然，像母语者在职场里说话。"
+        elif tgt == "en":
+            polite = "用自然、礼貌的职场口语。"
+        sys_prompt = (
+            f"你是一名专业的同声传译员，场景是：{self.scenario}。\n"
+            f"任务：把用户发来的{LANG_ZH[src]}口语，翻译成地道、自然的{LANG_ZH[tgt]}口语。\n"
+            "规则：\n"
+            "1. 只输出译文本身，不要解释、不要加引号、不要回答问题、不要加拼音或注释。\n"
+            "2. 原文来自语音识别，可能有错字、断句不全或口头禅，请根据上下文理解后翻译成通顺的话，口头禅可省略。\n"
+            "3. 保持原意和语气，不要擅自增加内容。\n"
+            f"4. {polite}"
+        )
+        if tgt == "zh":
+            sys_prompt += "\n5. 使用简体中文。"
+        if terms:
+            sys_prompt += "\n术语表（必须遵守）：\n" + "\n".join(f"- {a} → {b}" for a, b in terms)
+        if ctx:
+            sys_prompt += "\n\n对话上文（仅供理解，不要翻译）：\n" + "\n".join(
+                f"- {s} ⇒ {t}" for s, t in ctx
+            )
+        return [
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": text},
+        ]
+
     # ------------------------------------------------------------------ 调用
     def stream(self, text: str, src: str, tgt: str, use_context=True,
                context: list[tuple[str, str]] | None = None) -> Iterator[tuple[str, list]]:
@@ -236,6 +280,8 @@ class Translator:
         else:
             options = {"temperature": 0.2, "top_p": 0.9}
         options["num_predict"] = 400
+        if getattr(self, "seed", None) is not None:
+            options["seed"] = int(self.seed)
         payload = {
             "model": self.model,
             "messages": msgs,

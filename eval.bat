@@ -28,6 +28,7 @@ echo   5. Speech recognition eval (synthetic voice + your recordings)
 echo   6. Open MLflow dashboard (platform: http://swt17:5000)
 echo   7. Rescore the latest run with the current test set (no re-translation)
 echo   8. Translation eval - only the model the app uses (after a prompt change)
+echo   9. A/B test: prompt v1 vs v2 on the app model, 2 fixed seeds (about 8 min)
 echo   0. Exit
 echo.
 set "CH="
@@ -40,5 +41,6 @@ if "%CH%"=="5" "%PY%" scripts\eval_asr.py --synth
 if "%CH%"=="6" "%PY%" scripts\mlflow_ui.py
 if "%CH%"=="7" "%PY%" scripts\eval_mt.py --rescore latest
 if "%CH%"=="8" "%PY%" scripts\eval_mt.py --models production
+if "%CH%"=="9" "%PY%" scripts\eval_mt.py --models production --prompts v1,v2 --seeds 42,7
 if "%CH%"=="0" exit /b 0
 goto menu
