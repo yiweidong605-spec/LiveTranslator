@@ -191,7 +191,12 @@ def step_ollama(gi):
             time.sleep(1)
 
     mem = gi[1] if gi else 0
-    if mem >= 7500:
+    # 推荐顺序来自 2026-11-06 的评测（docs: 评测结果），显存要同时放下模型和 Whisper（约 2GB）
+    if mem >= 14000:
+        rec, why = "qwen3:14b", "显存充足，用评测第一的 14B 模型（约 9.3GB，每句约 0.5 秒）"
+    elif mem >= 10000:
+        rec, why = "qwen3:8b", "显存较多，用 8B 模型，评测第四、速度快（约 5.2GB）"
+    elif mem >= 7500:
         rec, why = "qwen2.5:7b", "显存充足，用 7B 模型，翻译质量更好（约 4.7GB）"
     elif mem >= 4000:
         rec, why = "qwen2.5:3b", "显存中等，用 3B 模型，速度快（约 1.9GB）"

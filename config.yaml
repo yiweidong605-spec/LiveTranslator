@@ -25,7 +25,7 @@ vad:                 # 断句
 translator:          # 翻译（本地大模型）
   backend: ollama        # ollama（推荐）/ hf（用 transformers 直接加载，需要 torch）
   ollama_url: http://127.0.0.1:11434
-  model: qwen2.5:7b      # 由 setup 根据显存自动推荐；也可试 hf.co/tencent/HY-MT1.5-7B-GGUF:Q4_K_M
+  model: qwen3:14b       # 2026-11-06 评测第一（chrF 51.8，关键词 92%，平均 0.47 秒）；显存不够可换 qwen3:8b / qwen2.5:7b
   style: auto            # auto / chat / hymt
   hf_model: Qwen/Qwen2.5-3B-Instruct
   scenario: 在法国求职、实习面试和日常交流
